@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episodic — Rate every episode</title>
+<meta name="description" content="Find any TV series, pick a season and rate every episode.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f4b740' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0c11;--surface:#16151c;--surface-2:#201e28;--line:#2a2833;
+  --text:#f3f0ea;--muted:#9b97a6;--accent:#f4b740;--accent-soft:rgba(244,183,64,.14);
+  --display:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+main{flex:1}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)}
+
+/* Header */
+header.top{position:sticky;top:0;z-index:50;background:rgba(13,12,17,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top-inner{display:flex;align-items:center;gap:20px;height:64px}
+.logo{font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:9px;flex:none}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
+nav.links{display:flex;gap:4px;flex:none}
+nav.links a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--muted);transition:.15s}
+nav.links a:hover{color:var(--text)}
+nav.links a.on{color:var(--text);background:var(--surface-2)}
+.search{position:relative;flex:1;max-width:440px;margin-left:auto}
+.search input{width:100%;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 16px 0 40px;font-size:14px;outline:none;transition:border-color .15s}
+.search input:focus{border-color:var(--accent)}
+.search input::-webkit-search-cancel-button{display:none}
+.search>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
+.suggest{position:absolute;top:48px;left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 24px 48px rgba(0,0,0,.55);display:none}
+.suggest.open{display:block}
+.suggest a{display:flex;gap:12px;align-items:center;padding:8px 12px}
+.suggest a:hover,.suggest a.active{background:var(--surface-2)}
+.suggest img,.suggest .ph{width:34px;height:50px;border-radius:5px;object-fit:cover;flex:none}
+.suggest b{display:block;font-size:14px;font-weight:600}
+.suggest small{color:var(--muted);font-size:12px}
+.suggest a.all{justify-content:center;font-size:13px;color:var(--accent);border-top:1px solid var(--line);padding:11px}
+
+/* Common */
+.ph{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2a2534,#1a1820);color:var(--muted);font-family:var(--display);font-weight:600;width:100%;height:100%}
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);font-size:14px;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#47434f}
+.btn.primary{background:var(--accent);color:#1a1405;border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--muted);background:transparent;cursor:pointer;transition:.15s}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--accent-soft);color:var(--accent);border-color:rgba(244,183,64,.4)}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:44px 0 18px}
+.sec-head h2{font-family:var(--display);font-weight:600;font-size:26px;margin:0;letter-spacing:-.01em}
+.sec-head a{color:var(--accent);font-size:14px}
+.empty{padding:48px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+.page{padding-top:36px;padding-bottom:60px}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.page-head h1{font-family:var(--display);font-weight:600;font-size:34px;margin:0;letter-spacing:-.02em}
+
+/* Hero */
+.hero{padding:64px 0 8px;text-align:center}
+.hero h1{font-family:var(--display);font-size:clamp(38px,6vw,68px);font-weight:600;line-height:1.02;letter-spacing:-.03em;margin:0 0 16px}
+.hero h1 em{color:var(--accent);font-style:italic}
+.hero p{color:var(--muted);font-size:17px;max-width:520px;margin:0 auto 28px;line-height:1.55}
+.hero form{display:flex;gap:10px;max-width:560px;margin:0 auto}
+.hero input{flex:1;height:52px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 22px;font-size:16px;outline:none}
+.hero input:focus{border-color:var(--accent)}
+.hero .btn{height:52px;padding:0 24px;font-size:15px}
+
+/* Grid / cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:24px 18px}
+.grid .empty{grid-column:1/-1}
+.card{display:block;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.poster{position:relative;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.poster img{width:100%;height:100%;object-fit:cover}
+.card:hover .poster{box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 0 1px rgba(244,183,64,.35)}
+.badge{position:absolute;top:8px;left:8px;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(13,12,17,.85);color:var(--accent);backdrop-filter:blur(6px)}
+.card-body{padding:10px 2px 0}
+.card-body h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
+.card-body p{font-size:13px;color:var(--muted);margin:0}
+.row-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:140px;gap:16px;overflow-x:auto;padding-bottom:10px;scrollbar-width:thin}
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface-2) 50%,var(--surface) 75%);background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.skel-card .poster{box-shadow:none}
+.skel-line{height:12px;border-radius:6px;margin-top:10px}
+
+/* Stars */
+.stars{display:inline-flex;align-items:center;gap:10px;user-select:none;-webkit-user-select:none}
+.stars-box{position:relative;line-height:0;cursor:pointer;border-radius:6px;outline:none;touch-action:manipulation}
+.stars-box:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.stars-track,.stars-fill{display:flex}
+.stars-box svg{width:var(--s,22px);height:var(--s,22px);flex:none}
+.stars-track svg{fill:#2c2a35}
+.stars-fill{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--p,0%)) 0 0);transition:clip-path .08s}
+.stars-fill svg{fill:var(--accent)}
+.stars.preview .stars-fill svg{fill:#ffd88a}
+.stars-val{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;min-width:2.3em;color:var(--muted)}
+.stars.has .stars-val{color:var(--accent)}
+.stars.sm{--s:16px}.stars.sm .stars-val{font-size:13px}
+.stars.lg{--s:30px}.stars.lg .stars-val{font-size:18px}
+.stars.disabled .stars-box{opacity:.3;cursor:not-allowed}
+.stars.readonly .stars-box{cursor:default}
+.stars.pop .stars-fill{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.08)}}
+
+/* Show page */
+.show-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.show-hero::before{content:"";position:absolute;inset:-60px;background:var(--bg-img) center/cover no-repeat;filter:blur(48px) saturate(1.3);opacity:.4}
+.show-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,17,.25),var(--bg) 96%)}
+.show-hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:270px 1fr;gap:44px;padding-top:44px;padding-bottom:40px}
+.show-poster{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,.6);background:var(--surface)}
+.show-info h1{font-family:var(--display);font-size:clamp(34px,5vw,56px);font-weight:600;letter-spacing:-.03em;line-height:1.02;margin:0 0 12px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:14px;margin-bottom:14px}
+.meta span+span::before{content:"·";margin-right:14px;color:#55515e}
+.status-pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--surface-2)}
+.status-pill.running{background:rgba(80,200,120,.15);color:#6fdc94}
+.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0;max-width:640px}
+.stat{background:rgba(22,21,28,.75);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-size:28px;font-weight:600;line-height:1}
+.stat span{display:block;font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.your-rating{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 18px;border-radius:14px;background:var(--accent-soft);border:1px solid rgba(244,183,64,.25);max-width:640px}
+.your-rating>span{font-size:14px;font-weight:600}
+.progress{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
+.prog-wrap{max-width:640px;margin-top:16px}
+.prog-wrap small{display:block;color:var(--muted);font-size:13px;margin-top:8px}
+.summary{color:#cfcbd6;line-height:1.65;font-size:15px;max-width:680px;margin:20px 0 0}
+
+/* Heatmap */
+.heat{margin-top:36px}
+.heat-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;overflow-x:auto}
+.hm-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.hm-label{width:34px;flex:none;font-size:12px;color:var(--muted);font-weight:600}
+.hm-cells{display:flex;gap:4px;flex-wrap:nowrap}
+.hm-cell{width:28px;height:28px;flex:none;border-radius:6px;border:0;background:var(--surface-2);font-size:10px;font-weight:700;color:rgba(0,0,0,.7);cursor:pointer;padding:0;transition:transform .1s}
+.hm-cell:hover{transform:scale(1.15)}
+.hm-cell.on{background:var(--c)}
+.hm-cell.future{background:transparent;border:1px dashed #3a3745;cursor:default}
+.legend{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-top:12px}
+.legend i{width:120px;height:8px;border-radius:99px;background:linear-gradient(90deg,hsl(0,65%,48%),hsl(45,75%,50%),hsl(120,55%,42%))}
+
+/* Seasons + episodes */
+.seasons{margin-top:36px;padding-bottom:60px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:22px;scrollbar-width:thin}
+.tab{flex:none;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;transition:.15s}
+.tab b{display:block;font-size:14px;font-weight:600}
+.tab small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.tab .tab-avg{color:var(--accent)}
+.tab:hover{border-color:#47434f}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#1a1405}
+.tab.on small,.tab.on .tab-avg{color:#4a3a10}
+.season-head{display:flex;gap:20px;align-items:center;margin-bottom:20px}
+.season-head img{width:88px;aspect-ratio:2/3;object-fit:cover;border-radius:8px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:600}
+.season-head h2{font-family:var(--display);font-size:30px;font-weight:600;margin:4px 0;letter-spacing:-.02em}
+.season-head p{margin:2px 0;font-size:14px}
+.episodes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.ep{display:grid;grid-template-columns:200px 1fr auto;gap:20px;align-items:center;padding:12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,box-shadow .4s}
+.ep:hover{border-color:#3a3745}
+.ep.flash{box-shadow:0 0 0 2px var(--accent)}
+.ep-thumb{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--surface-2)}
+.ep-thumb img{width:100%;height:100%;object-fit:cover}
+.ep-num{position:absolute;left:8px;bottom:8px;background:rgba(13,12,17,.85);font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px}
+.ep-code{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.ep-main h3{font-size:17px;font-weight:600;margin:4px 0}
+.ep-meta{font-size:13px;color:var(--muted)}
+.ep-sum{font-size:14px;color:#bdb8c5;line-height:1.55;margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.ep-sum.open{-webkit-line-clamp:unset}
+.ep-rate{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-right:8px}
+.ep-rate small{font-size:12px;color:var(--muted)}
+
+/* My ratings */
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:28px}
+.stat-grid .stat{background:var(--surface)}
+.mine-list{display:flex;flex-direction:column;gap:12px}
+.mine-row{display:grid;grid-template-columns:72px 1fr auto;gap:18px;align-items:center;padding:12px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.mine-row .poster{width:72px;border-radius:8px;box-shadow:none}
+.mine-row h3{margin:0 0 2px;font-size:17px;font-weight:600}
+.mine-row p{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.mine-row small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
+.mine-row .progress{max-width:360px;margin-top:10px}
+.mine-actions{display:flex;gap:8px}
+select.btn{appearance:none;-webkit-appearance:none;padding-right:16px}
+
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px;line-height:1.6}
+footer a{color:var(--text);text-decoration:underline;text-decoration-color:#55515e}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:100}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:820px){
+  .top-inner{flex-wrap:wrap;height:auto;padding-top:12px;padding-bottom:12px;gap:12px}
+  nav.links{margin-left:auto}
+  .search{order:3;max-width:none;flex-basis:100%}
+  .show-hero-inner{grid-template-columns:1fr;gap:24px;padding-top:28px}
+  .show-poster{width:170px}
+  .stat-row,.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ep{grid-template-columns:120px 1fr;gap:14px}
+  .ep-rate{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;padding:4px 4px 0}
+  .ep-main h3{font-size:15px}
+  .mine-row{grid-template-columns:60px 1fr}
+  .mine-row .poster{width:60px}
+  .mine-actions{grid-column:1/-1}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:20px 14px}
+  .hero form{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <a href="#/" class="logo"><i></i>Episodic</a>
+    <form class="search" id="search-form" role="search" autocomplete="off">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search any TV series…" aria-label="Search series">
+      <div class="suggest" id="suggest"></div>
+    </form>
+    <nav class="links">
+      <a href="#/" data-nav="home">Discover</a>
+      <a href="#/mine" data-nav="mine">My ratings</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    Series data and images from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0).
+    Your ratings are saved in this browser only — use Export on “My ratings” to back them up or move them to another device.
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+const API = 'https://api.tvmaze.com';
+const KEY = 'episodic.ratings.v1';
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.85 5.95 6.5.8-4.8 4.5 1.25 6.5L12 17.4l-5.8 3.15 1.25-6.5-4.8-4.5 6.5-.8z"/></svg>';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const app = $('#app');
+
+/* ---------- Storage ---------- */
+function load() {
+  try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && d.shows) return d; } catch (e) {}
+  return { version: 1, shows: {} };
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { toast('Could not save — browser storage is unavailable'); } }
+let store = load();
+
+/* ---------- API ---------- */
+const cache = new Map();
+function api(path) {
+  if (cache.has(path)) return cache.get(path);
+  const p = (async () => {
+    for (let i = 0; i < 4; i++) {
+      const r = await fetch(API + path);
+      if (r.status === 429) { await new Promise(res => setTimeout(res, 1000 * (i + 1))); continue; }
+      if (r.status === 404) throw new Error('notfound');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }
+    throw new Error('busy');
+  })();
+  cache.set(path, p);
+  p.catch(() => cache.delete(path));
+  return p;
+}
+
+/* ---------- Helpers ---------- */
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function strip(html) { if (!html) return ''; return (new DOMParser().parseFromString(html, 'text/html').body.textContent || '').trim(); }
+function yearsOf(s) {
+  const a = s.premiered ? s.premiered.slice(0, 4) : '';
+  if (!a) return '';
+  if (s.status === 'Running' || s.status === 'In Development') return a + '–';
+  const b = s.ended ? s.ended.slice(0, 4) : '';
+  return b && b !== a ? `${a}–${b}` : a;
+}
+function fmtDate(d) {
+  if (!d) return 'Date TBA';
+  return new Date(d + 'T00:00:00').toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function isAired(ep) {
+  if (ep.airstamp) return new Date(ep.airstamp) <= new Date();
+  if (ep.airdate) return new Date(ep.airdate + 'T00:00:00') <= new Date();
+  return false;
+}
+const pad = n => n == null ? '–' : String(n).padStart(2, '0');
+const initials = name => esc(String(name || '?').split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase());
+const avgOf = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+const color = v => `hsl(${Math.round((v - 0.5) / 4.5 * 120)},62%,${v >= 4.5 ? 42 : 48}%)`;
+const fmt = v => v ? (v % 1 ? v.toFixed(1) : v.toFixed(0)) : '';
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function setTitle(t) { document.title = t ? `${t} · Episodic` : 'Episodic — Rate every episode'; }
+function setNav(v) { $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === v)); app.dataset.view = v; }
+function skeletons(n) {
+  return Array.from({ length: n }, () => `<div class="skel-card"><div class="poster skel"></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-line" style="width:45%"></div></div>`).join('');
+}
+function errorView(target, msg, retry) {
+  target.innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(msg)}<br><br><button class="btn" id="retry">Try again</button></div>`;
+  $('#retry', target).onclick = retry;
+}
+
+/* ---------- Star rating widget (0.5 – 5, half steps) ---------- */
+function stars(value, onChange, opt = {}) {
+  const el = document.createElement('div');
+  el.className = 'stars ' + (opt.size || '') + (opt.disabled ? ' disabled' : '') + (onChange ? '' : ' readonly');
+  el.innerHTML = `<div class="stars-box"><div class="stars-track">${STAR.repeat(5)}</div><div class="stars-fill">${STAR.repeat(5)}</div></div>${opt.noValue ? '' : '<span class="stars-val"></span>'}`;
+  const box = el.firstElementChild, val = el.querySelector('.stars-val');
+  let cur = value || 0;
+  const paint = (v, preview) => {
+    box.style.setProperty('--p', (v / 5 * 100) + '%');
+    el.classList.toggle('preview', !!preview);
+    el.classList.toggle('has', v > 0);
+    if (val) val.textContent = v ? v.toFixed(1) : (opt.disabled ? '' : '—');
+  };
+  paint(cur);
+  if (opt.disabled && opt.title) el.title = opt.title;
+  if (!onChange || opt.disabled) return el;
+
+  box.tabIndex = 0;
+  box.setAttribute('role', 'slider');
+  box.setAttribute('aria-label', opt.label || 'Rating');
+  box.setAttribute('aria-valuemin', '0');
+  box.setAttribute('aria-valuemax', '5');
+  box.setAttribute('aria-valuenow', cur);
+  const at = e => {
+    const r = box.getBoundingClientRect();
+    const x = Math.min(Math.max(e.clientX - r.left, 0), r.width);
+    return Math.max(0.5, Math.ceil(x / r.width * 10) / 2);
+  };
+  const set = v => {
+    cur = Math.min(5, Math.max(0, v));
+    paint(cur);
+    box.setAttribute('aria-valuenow', cur);
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+    onChange(cur);
+  };
+  box.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') paint(at(e), true); });
+  box.addEventListener('pointerleave', () => paint(cur));
+  box.addEventListener('click', e => { const v = at(e); set(v === cur ? 0 : v); });
+  box.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); set(cur + 0.5); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); set(cur - 0.5); }
+    else if (e.key === 'Delete' || e.key === 'Backspace' || e.key === '0') { e.preventDefault(); set(0); }
+    else if (/^[1-5]$/.test(e.key)) { e.preventDefault(); set(+e.key); }
+  });
+  return el;
+}
+
+/* ---------- Cards ---------- */
+function card(s) {
+  const mine = store.shows[s.id];
+  const img = s.image && s.image.medium;
+  const sub = [yearsOf(s), s.genres && s.genres[0]].filter(Boolean).map(esc).join(' · ');
+  return `<a class="card" href="#/show/${s.id}">
+    <div class="poster">${img ? `<img src="${esc(img)}" alt="${esc(s.name)} poster" loading="lazy">` : `<div class="ph">${initials(s.name)}</div>`}
+      ${mine && mine.showRating ? `<span class="badge">★ ${fmt(mine.showRating)}</span>` : ''}</div>
+    <div class="card-body"><h3>${esc(s.name)}</h3><p>${sub}</p></div></a>`;
+}
+function miniCard(r) {
+  const n = Object.keys(r.episodes).length;
+  return `<a class="card" href="#/show/${r.id}">
+    <div class="poster">${r.image ? `<img src="${esc(r.image)}" alt="${esc(r.name)} poster" loading="lazy">` : `<div class="ph">${initials(r.name)}</div>`}
+      ${r.showRating ? `<span class="badge">★ ${fmt(r.showRating)}</span>` : ''}</div>
+    <div class="card-body"><h3>${esc(r.name)}</h3><p>${n} episode${n === 1 ? '' : 's'} rated</p></div></a>`;
+}
+
+/* ---------- Router ---------- */
+let renderId = 0;
+let current = null; // loaded show on the show page
+
+function route() {
+  closeSug();
+  const parts = (location.hash.slice(1) || '/').split('/').filter(Boolean);
+  if (parts[0] === 'show' && parts[1]) {
+    const sid = +parts[1];
+    const season = parts[2] === 'season' ? +parts[3] : null;
+    if (current && current.show.id === sid && app.dataset.view === 'show') { selectSeason(season || defaultSeason()); return; }
+    window.scrollTo(0, 0);
+    renderShow(sid, season);
+  } else if (parts[0] === 'search') {
+    window.scrollTo(0, 0);
+    renderSearch(decodeURIComponent(parts.slice(1).join('/')));
+  } else if (parts[0] === 'mine') {
+    window.scrollTo(0, 0);
+    renderMine();
+  } else {
+    window.scrollTo(0, 0);
+    renderHome();
+  }
+}
+window.addEventListener('hashchange', route);
+
+/* ---------- Home ---------- */
+let popular = [];
+async function renderHome() {
+  const id = ++renderId; current = null; setNav('home'); setTitle();
+  const mine = Object.values(store.shows).sort((a, b) => b.updated - a.updated);
+  app.innerHTML = `
+  <div class="wrap">
+    <section class="hero">
+      <h1>Rate every <em>episode</em>.</h1>
+      <p>Find any TV series, jump into any season, and keep your own score for every episode you watch.</p>
+      <form id="hero-form"><input id="hero-q" type="search" placeholder="Try “Breaking Bad”, “Dark”, “The Office”…" aria-label="Search series"><button class="btn primary">Search</button></form>
+    </section>
+    ${mine.length ? `<section><div class="sec-head"><h2>Continue rating</h2><a href="#/mine">All my ratings →</a></div><div class="row-scroll">${mine.slice(0, 14).map(miniCard).join('')}</div></section>` : ''}
+    <section style="padding-bottom:60px"><div class="sec-head"><h2>Popular series</h2><div class="chips" id="genres"></div></div><div class="grid" id="pop">${skeletons(18)}</div></section>
+  </div>`;
+  $('#hero-form').onsubmit = e => { e.preventDefault(); const q = $('#hero-q').value.trim(); if (q) location.hash = '#/search/' + encodeURIComponent(q); };
+
+  try {
+    if (!popular.length) {
+      const pages = await Promise.all([0, 1, 2].map(p => api('/shows?page=' + p).catch(() => [])));
+      popular = pages.flat().filter(s => s.image && s.language)
+        .sort((a, b) => (b.weight || 0) - (a.weight || 0) || ((b.rating && b.rating.average) || 0) - ((a.rating && a.rating.average) || 0))
+        .slice(0, 60);
+      if (!popular.length) throw new Error('empty');
+    }
+    if (id !== renderId) return;
+    const counts = {};
+    popular.forEach(s => (s.genres || []).forEach(g => counts[g] = (counts[g] || 0) + 1));
+    const genres = ['All', ...Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8).map(x => x[0])];
+    const chips = $('#genres');
+    chips.innerHTML = genres.map((g, i) => `<button class="chip${i ? '' : ' on'}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
+    const draw = g => { $('#pop').innerHTML = popular.filter(s => g === 'All' || (s.genres || []).includes(g)).slice(0, 36).map(card).join(''); };
+    chips.onclick = e => { const b = e.target.closest('.chip'); if (!b) return; $$('.chip', chips).forEach(c => c.classList.toggle('on', c === b)); draw(b.dataset.g); };
+    draw('All');
+  } catch (e) {
+    if (id !== renderId) return;
+    errorView($('#pop'), 'Couldn’t load series right now. Check your connection.', renderHome);
+  }
+}
+
+/* ---------- Search ---------- */
+async function renderSearch(q) {
+  const id = ++renderId; current = null; setNav(''); setTitle('Search: ' + q);
+  $('#q').value = q;
+  app.innerHTML = `<section class="wrap page"><div class="page-head"><h1>Results for “${esc(q)}”</h1></div><div class="grid" id="res">${skeletons(12)}</div></section>`;
+  try {
+    const r = await api('/search/shows?q=' + encodeURIComponent(q));
+    if (id !== renderId) return;
+    $('#res').innerHTML = r.length ? r.map(x => card(x.show)).join('') : `<div class="empty">No series found for “${esc(q)}”. Try a different spelling.</div>`;
+  } catch (e) {
+    if (id !== renderId) return;
+    errorView($('#res'), 'Search failed. Check your connection.', () => renderSearch(q));
+  }
+}
+
+/* ---------- Header suggestions ---------- */
+const qIn = $('#q'), sug = $('#suggest');
+let sugT, sugIdx = -1;
+function closeSug() { sug.classList.remove('open'); sugIdx = -1; }
+qIn.addEventListener('input', () => {
+  clearTimeout(sugT);
+  const q = qIn.value.trim();
+  if (q.length < 2) { closeSug(); return; }
+  sugT = setTimeout(async () => {
+    try {
+      const r = await api('/search/shows?q=' + encodeURIComponent(q));
+      if (qIn.value.trim() !== q) return;
+      const items = r.slice(0, 6).map(x => x.show);
+      sug.innerHTML = items.map(s => {
+        const net = (s.network && s.network.name) || (s.webChannel && s.webChannel.name) || '';
+        return `<a href="#/show/${s.id}">${s.image ? `<img src="${esc(s.image.medium)}" alt="">` : `<div class="ph"></div>`}<div><b>${esc(s.name)}</b><small>${esc([yearsOf(s), net].filter(Boolean).join(' · '))}</small></div></a>`;
+      }).join('') + `<a class="all" href="#/search/${encodeURIComponent(q)}">See all results for “${esc(q)}”</a>`;
+      sug.classList.add('open'); sugIdx = -1;
+    } catch (e) {}
+  }, 250);
+});
+qIn.addEventListener('keydown', e => {
+  const links = $$('a', sug);
+  if (!sug.classList.contains('open') || !links.length) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    sugIdx = (sugIdx + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+    links.forEach((a, i) => a.classList.toggle('active', i === sugIdx));
+  } else if (e.key === 'Escape') closeSug();
+});
+$('#search-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const links = $$('a', sug);
+  if (sugIdx >= 0 && links[sugIdx]) { location.hash = links[sugIdx].getAttribute('href'); }
+  else { const q = qIn.value.trim(); if (q) location.hash = '#/search/' + encodeURIComponent(q); }
+  closeSug(); qIn.blur();
+});
+document.addEventListener('click', e => { if (!e.target.closest('.search')) closeSug(); });
+sug.addEventListener('click', () => { closeSug(); qIn.value = ''; });
+
+/* ---------- Show page ---------- */
+async function renderShow(showId, seasonNum) {
+  const id = ++renderId; current = null; setNav('show');
+  app.innerHTML = `<section class="wrap" style="padding-top:44px"><div style="display:grid;grid-template-columns:minmax(0,270px) 1fr;gap:44px">
+    <div class="poster skel" style="border-radius:14px"></div>
+    <div><div class="skel skel-line" style="height:44px;width:60%"></div><div class="skel skel-line" style="width:40%"></div><div class="skel skel-line" style="height:80px;width:90%;margin-top:30px"></div></div></div></section>`;
+  let d;
+  try { d = await api(`/shows/${showId}?embed[]=seasons&embed[]=episodes`); }
+  catch (e) {
+    if (id !== renderId) return;
+    app.innerHTML = `<section class="wrap page"><div class="empty"></div></section>`;
+    if (e.message === 'notfound') $('.empty').textContent = 'That series doesn’t exist.';
+    else errorView($('.empty').parentNode, 'Couldn’t load this series. Check your connection.', () => renderShow(showId, seasonNum));
+    return;
+  }
+  if (id !== renderId) return;
+
+  const eps = ((d._embedded && d._embedded.episodes) || []).filter(e => e.season != null);
+  const bySeason = new Map();
+  for (const e of eps) { if (!bySeason.has(e.season)) bySeason.set(e.season, []); bySeason.get(e.season).push(e); }
+  bySeason.forEach(l => l.sort((a, b) => (a.number ?? 999) - (b.number ?? 999)));
+  let seasons = ((d._embedded && d._embedded.seasons) || []).slice();
+  bySeason.forEach((_, n) => { if (!seasons.some(s => s.number === n)) seasons.push({ number: n }); });
+  seasons.sort((a, b) => a.number - b.number);
+  current = { show: d, seasons, bySeason, eps };
+  drawShow(seasonNum);
+}
+
+function defaultSeason() {
+  if (!current) return 1;
+  const withEps = current.seasons.find(s => (current.bySeason.get(s.number) || []).length);
+  return (withEps || current.seasons[0] || { number: 1 }).number;
+}
+
+function drawShow(seasonNum) {
+  const { show: s, seasons, eps } = current;
+  setTitle(s.name);
+  const net = (s.network && s.network.name) || (s.webChannel && s.webChannel.name) || '';
+  const runtime = s.averageRuntime || s.runtime;
+  const summary = strip(s.summary);
+  const rec = store.shows[s.id];
+  app.innerHTML = `
+  <section class="show-hero" style="--bg-img:url('${esc(s.image ? s.image.original : '')}')">
+    <div class="wrap show-hero-inner">
+      <div>${s.image ? `<img class="show-poster" src="${esc(s.image.original || s.image.medium)}" alt="${esc(s.name)} official poster">` : `<div class="show-poster"><div class="ph" style="font-size:48px">${initials(s.name)}</div></div>`}</div>
+      <div class="show-info">
+        <h1>${esc(s.name)}</h1>
+        <div class="meta">
+          ${yearsOf(s) ? `<span>${esc(yearsOf(s))}</span>` : ''}
+          ${net ? `<span>${esc(net)}</span>` : ''}
+          ${runtime ? `<span>${runtime} min episodes</span>` : ''}
+          ${s.language ? `<span>${esc(s.language)}</span>` : ''}
+          ${s.status ? `<span><i class="status-pill${s.status === 'Running' ? ' running' : ''}">${esc(s.status)}</i></span>` : ''}
+        </div>
+        ${(s.genres || []).length ? `<div class="chips">${s.genres.map(g => `<span class="chip" style="cursor:default">${esc(g)}</span>`).join('')}</div>` : ''}
+        <div class="stat-row">
+          <div class="stat"><b>${seasons.length}</b><span>Season${seasons.length === 1 ? '' : 's'}</span></div>
+          <div class="stat"><b>${eps.length}</b><span>Episodes</span></div>
+          <div class="stat"><b>${s.rating && s.rating.average ? s.rating.average : '—'}</b><span>TVmaze /10</span></div>
+          <div class="stat"><b id="ep-avg">—</b><span>Your ep. avg /5</span></div>
+        </div>
+        <div class="your-rating"><span>Your rating for the series</span><div id="series-stars"></div></div>
+        <div class="prog-wrap"><div class="progress"><span id="prog-fill" style="width:0"></span></div><small id="prog-label"></small></div>
+        ${summary ? `<p class="summary">${esc(summary)}</p>` : ''}
+      </div>
+    </div>
+  </section>
+  <div class="wrap">
+    ${eps.length ? `<section class="heat"><div class="sec-head" style="margin-top:0"><h2>Your episode map</h2></div>
+      <div class="heat-card"><div id="heatmap"></div><div class="legend">Low <i></i> High · dashed = not aired yet · click any square to jump to it</div></div></section>` : ''}
+    <section class="seasons">
+      <div class="sec-head"><h2>Seasons & episodes</h2></div>
+      <div class="tabs" role="tablist" id="tabs">${seasons.map(se => {
+        const n = (current.bySeason.get(se.number) || []).length;
+        return `<button class="tab" role="tab" data-season="${se.number}"><b>Season ${se.number}</b><small>${n} episode${n === 1 ? '' : 's'} <span class="tab-avg"></span></small></button>`;
+      }).join('')}</div>
+      <div id="season-panel">${seasons.length ? '' : '<div class="empty">No seasons have been announced for this series yet.</div>'}</div>
+    </section>
+  </div>`;
+
+  $('#series-stars').append(stars(rec && rec.showRating, v => {
+    const r = ensureRec(); r.showRating = v; commit(r);
+    toast(v ? `You rated ${s.name} ${v}/5` : 'Series rating cleared');
+  }, { size: 'lg', label: 'Your rating for ' + s.name }));
+
+  $('#tabs').onclick = e => {
+    const t = e.target.closest('.tab'); if (!t) return;
+    const n = +t.dataset.season;
+    history.replaceState(null, '', `#/show/${s.id}/season/${n}`);
+    selectSeason(n);
+  };
+  const hm = $('#heatmap');
+  if (hm) hm.onclick = e => {
+    const c = e.target.closest('.hm-cell'); if (!c || c.classList.contains('future')) return;
+    const n = +c.dataset.season;
+    history.replaceState(null, '', `#/show/${s.id}/season/${n}`);
+    selectSeason(n);
+    const row = $('#ep-' + c.dataset.ep);
+    if (row) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 1400);
+    }
+  };
+
+  if (seasons.length) {
+    const valid = seasonNum && seasons.some(x => x.number === seasonNum);
+    selectSeason(valid ? seasonNum : defaultSeason());
+  }
+  refreshStats();
+}
+
+function selectSeason(n) {
+  if (!current) return;
+  const tabs = $$('.tab');
+  if (!tabs.length) return;
+  tabs.forEach(t => { const on = +t.dataset.season === n; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); if (on) t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
+  if ($('#season-panel').dataset.season === String(n)) return;
+  renderSeason(n);
+}
+
+function renderSeason(n) {
+  const { seasons, bySeason } = current;
+  const season = seasons.find(x => x.number === n) || { number: n };
+  const list = bySeason.get(n) || [];
+  const panel = $('#season-panel');
+  panel.dataset.season = n;
+  const start = season.premiereDate || (list[0] && list[0].airdate);
+  const end = season.endDate || (list.length && list[list.length - 1].airdate);
+  const range = start ? (end && end !== start ? `${fmtDate(start)} – ${fmtDate(end)}` : fmtDate(start)) : 'Dates TBA';
+  const title = season.name && season.name !== `Season ${n}` ? season.name : `Season ${n}`;
+  const planned = season.episodeOrder && season.episodeOrder > list.length ? ` (of ${season.episodeOrder} planned)` : '';
+  panel.innerHTML = `
+    <div class="season-head">
+      ${season.image ? `<img src="${esc(season.image.medium)}" alt="Season ${n} poster">` : ''}
+      <div><div class="eyebrow">Season ${n}</div><h2>${esc(title)}</h2>
+        <p class="muted">${list.length} episode${list.length === 1 ? '' : 's'}${planned} · ${esc(range)}</p>
+        <p id="season-avg"></p></div>
+    </div>
+    ${list.length ? `<ol class="episodes">${list.map(epRow).join('')}</ol>` : `<div class="empty">No episodes announced for this season yet.</div>`}`;
+  const recEps = (store.shows[current.show.id] || {}).episodes || {};
+  list.forEach(ep => {
+    const aired = isAired(ep);
+    const holder = $(`#ep-${ep.id} .ep-rate`, panel);
+    holder.append(stars(recEps[ep.id] && recEps[ep.id].r, v => setEpRating(ep, v), {
+      disabled: !aired, title: 'You can rate this once it airs', label: `Rate S${ep.season}E${ep.number} ${ep.name}`
+    }));
+    if (!aired) holder.insertAdjacentHTML('beforeend', `<small>Airs ${esc(fmtDate(ep.airdate))}</small>`);
+  });
+  $$('.ep-sum', panel).forEach(p => p.onclick = () => p.classList.toggle('open'));
+  refreshSeasonAvg();
+}
+
+function epRow(ep) {
+  const img = ep.image && ep.image.medium;
+  const sum = strip(ep.summary);
+  const meta = [fmtDate(ep.airdate), ep.runtime ? ep.runtime + ' min' : '', ep.rating && ep.rating.average ? `TVmaze ${ep.rating.average}` : ''].filter(Boolean).join(' · ');
+  return `<li class="ep" id="ep-${ep.id}">
+    <div class="ep-thumb">${img ? `<img src="${esc(img)}" alt="" loading="lazy">` : `<div class="ph">${ep.number != null ? 'E' + ep.number : '★'}</div>`}<span class="ep-num">${ep.number != null ? 'E' + ep.number : 'Special'}</span></div>
+    <div class="ep-main"><div class="ep-code">S${pad(ep.season)} · E${pad(ep.number)}</div><h3>${esc(ep.name || 'TBA')}</h3><div class="ep-meta">${esc(meta)}</div>${sum ? `<p class="ep-sum" title="Click to expand">${esc(sum)}</p>` : ''}</div>
+    <div class="ep-rate"></div></li>`;
+}
+
+/* ---------- Ratings state ---------- */
+function ensureRec() {
+  const s = current.show;
+  let r = store.shows[s.id];
+  if (!r) r = store.shows[s.id] = { id: s.id, showRating: 0, episodes: {}, updated: Date.now() };
+  r.name = s.name;
+  r.image = s.image ? s.image.medium : null;
+  r.years = yearsOf(s);
+  r.seasons = current.seasons.length;
+  r.total = current.eps.filter(isAired).length;
+  return r;
+}
+function commit(r) {
+  r.updated = Date.now();
+  if (!r.showRating && !Object.keys(r.episodes).length) delete store.shows[r.id];
+  save();
+  refreshStats();
+}
+function setEpRating(ep, v) {
+  const r = ensureRec();
+  if (v) r.episodes[ep.id] = { r: v, s: ep.season, n: ep.number, rt: ep.runtime || current.show.averageRuntime || 0 };
+  else delete r.episodes[ep.id];
+  commit(r);
+}
+
+function refreshStats() {
+  if (!current || !$('#ep-avg')) return;
+  const { show: s, bySeason, eps } = current;
+  const er = (store.shows[s.id] || {}).episodes || {};
+  const aired = eps.filter(isAired);
+  const rated = eps.filter(e => er[e.id]);
+  $('#ep-avg').textContent = rated.length ? avgOf(rated.map(e => er[e.id].r)).toFixed(2) : '—';
+  $('#prog-fill').style.width = aired.length ? (Math.min(rated.length, aired.length) / aired.length * 100) + '%' : '0';
+  $('#prog-label').textContent = aired.length ? `${rated.length} of ${aired.length} aired episodes rated` : 'No episodes have aired yet';
+  $$('.tab').forEach(t => {
+    const l = (bySeason.get(+t.dataset.season) || []).filter(e => er[e.id]);
+    t.querySelector('.tab-avg').textContent = l.length ? `· ★ ${avgOf(l.map(e => er[e.id].r)).toFixed(1)}` : '';
+  });
+  refreshSeasonAvg();
+  renderHeatmap();
+}
+function refreshSeasonAvg() {
+  const box = $('#season-avg'); if (!box || !current) return;
+  const er = (store.shows[current.show.id] || {}).episodes || {};
+  const list = current.bySeason.get(+$('#season-panel').dataset.season) || [];
+  const rated = list.filter(e => er[e.id]);
+  const airedN = list.filter(isAired).length;
+  box.innerHTML = rated.length
+    ? `Your season average: <b style="color:var(--accent)">★ ${avgOf(rated.map(e => er[e.id].r)).toFixed(2)}</b> <span class="muted">(${rated.length}/${airedN} rated)</span>`
+    : (airedN ? '<span class="muted">Tap the stars to rate episodes — half stars work too.</span>' : '');
+}
+function renderHeatmap() {
+  const box = $('#heatmap'); if (!box || !current) return;
+  const { seasons, bySeason } = current;
+  const er = (store.shows[current.show.id] || {}).episodes || {};
+  box.innerHTML = seasons.filter(se => (bySeason.get(se.number) || []).length).map(se =>
+    `<div class="hm-row"><span class="hm-label">S${se.number}</span><div class="hm-cells">${bySeason.get(se.number).map(e => {
+      const v = er[e.id] && er[e.id].r, aired = isAired(e);
+      const tip = `S${e.season}E${e.number ?? '?'} · ${e.name}${v ? ` · ★ ${v}` : aired ? ' · not rated' : ' · not aired'}`;
+      return `<button class="hm-cell${v ? ' on' : ''}${aired ? '' : ' future'}" data-ep="${e.id}" data-season="${e.season}" ${v ? `style="--c:${color(v)}"` : ''} title="${esc(tip)}" aria-label="${esc(tip)}">${fmt(v)}</button>`;
+    }).join('')}</div></div>`).join('');
+}
+
+/* ---------- My ratings ---------- */
+function renderMine() {
+  ++renderId; current = null; setNav('mine'); setTitle('My ratings');
+  const list = Object.values(store.shows);
+  const allEps = list.flatMap(r => Object.values(r.episodes));
+  const hours = Math.round(allEps.reduce((a, e) => a + (e.rt || 0), 0) / 60);
+  app.innerHTML = `
+  <section class="wrap page">
+    <div class="page-head"><h1>My ratings</h1>
+      <div class="mine-actions">
+        <select class="btn" id="sort" aria-label="Sort"><option value="recent">Recently rated</option><option value="top">Highest rated</option><option value="most">Most episodes rated</option><option value="name">Name A–Z</option></select>
+        <button class="btn" id="export">Export</button>
+        <label class="btn" style="cursor:pointer">Import<input type="file" id="import" accept="application/json,.json" hidden></label>
+      </div></div>
+    <div class="stat-grid">
+      <div class="stat"><b>${list.length}</b><span>Series</span></div>
+      <div class="stat"><b>${allEps.length}</b><span>Episodes rated</span></div>
+      <div class="stat"><b>${allEps.length ? avgOf(allEps.map(e => e.r)).toFixed(2) : '—'}</b><span>Avg episode /5</span></div>
+      <div class="stat"><b>${hours}</b><span>Hours watched*</span></div>
+    </div>
+    <div id="mine-list" class="mine-list"></div>
+    ${list.length ? '<p class="muted" style="font-size:12px;margin-top:16px">*Estimated from the runtime of the episodes you rated.</p>' : ''}
+  </section>`;
+  const draw = () => {
+    const sort = $('#sort').value;
+    const epAvg = r => avgOf(Object.values(r.episodes).map(e => e.r));
+    const rows = list.slice().sort((a, b) =>
+      sort === 'name' ? a.name.localeCompare(b.name) :
+      sort === 'top' ? ((b.showRating || epAvg(b)) - (a.showRating || epAvg(a))) :
+      sort === 'most' ? Object.keys(b.episodes).length - Object.keys(a.episodes).length :
+      b.updated - a.updated);
+    const box = $('#mine-list');
+    if (!rows.length) { box.innerHTML = `<div class="empty">You haven’t rated anything yet. <a href="#/" style="color:var(--accent)">Find a series →</a></div>`; return; }
+    box.innerHTML = rows.map(r => {
+      const n = Object.keys(r.episodes).length;
+      const pct = r.total ? Math.min(100, n / r.total * 100) : 0;
+      return `<div class="mine-row" data-id="${r.id}">
+        <a href="#/show/${r.id}" class="poster">${r.image ? `<img src="${esc(r.image)}" alt="${esc(r.name)} poster" loading="lazy">` : `<div class="ph">${initials(r.name)}</div>`}</a>
+        <div><a href="#/show/${r.id}"><h3>${esc(r.name)}</h3></a>
+          <p>${esc([r.years, r.seasons ? `${r.seasons} season${r.seasons === 1 ? '' : 's'}` : ''].filter(Boolean).join(' · '))}</p>
+          <div class="slot"></div>
+          ${r.total ? `<div class="progress"><span style="width:${pct}%"></span></div>` : ''}
+          <small>${n}${r.total ? ` of ${r.total}` : ''} episodes rated${n ? ` · avg ★ ${epAvg(r).toFixed(2)}` : ''}</small></div>
+        <div class="mine-actions"><a class="btn" href="#/show/${r.id}">Open</a><button class="btn ghost" data-remove>Remove</button></div></div>`;
+    }).join('');
+    rows.forEach(r => {
+      const slot = $(`.mine-row[data-id="${r.id}"] .slot`, box);
+      if (r.showRating) slot.append(stars(r.showRating, null, { size: 'sm' }));
+      else slot.innerHTML = '<span class="muted" style="font-size:13px">No series rating yet</span>';
+    });
+  };
+  $('#sort').onchange = draw;
+  $('#mine-list').onclick = e => {
+    const b = e.target.closest('[data-remove]'); if (!b) return;
+    const id = b.closest('.mine-row').dataset.id;
+    if (confirm(`Remove all your ratings for ${store.shows[id].name}?`)) { delete store.shows[id]; save(); renderMine(); toast('Removed'); }
+  };
+  $('#export').onclick = () => {
+    const blob = new Blob([JSON.stringify(store, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `episodic-ratings-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  $('#import').onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        const d = JSON.parse(fr.result);
+        if (!d || typeof d.shows !== 'object') throw 0;
+        let n = 0;
+        for (const [k, v] of Object.entries(d.shows)) {
+          if (!v || typeof v.episodes !== 'object') continue;
+          const cur = store.shows[k];
+          if (!cur || (v.updated || 0) > (cur.updated || 0)) { store.shows[k] = v; n++; }
+        }
+        save(); renderMine(); toast(`Imported ${n} series`);
+      } catch (err) { toast('That file isn’t a valid Episodic export'); }
+    };
+    fr.readAsText(f);
+  };
+  draw();
+}
+
+/* keep tabs in sync if ratings change in another tab */
+window.addEventListener('storage', e => { if (e.key === KEY) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
+
+route();
+})();
+</script>
+</body>
+</html>
