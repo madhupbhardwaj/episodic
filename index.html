@@ -129,7 +129,7 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:34px;background
 .bars i.f{background:var(--signal)}
 .meter.preview .bars i.f{background:color-mix(in srgb,var(--signal) 55%,var(--sunk))}
 .meter.live .bars{cursor:pointer}
-.meter-val{font-family:var(--display);font-size:var(--fs,20px);line-height:1;min-width:2.6em;font-variant-numeric:tabular-nums}
+.meter-val{font-family:var(--display);font-size:var(--fs,20px);line-height:1;min-width:calc(var(--fs,20px) * 2.6);font-variant-numeric:tabular-nums}
 .meter-val small{font-family:var(--sans);font-size:.55em;color:var(--ink-2);margin-left:1px}
 .meter-val.none{font-family:var(--sans);font-size:14px;color:var(--ink-2)}
 .meter.lg{--h:40px;--w:11px;--g:5px;--fs:34px}
@@ -293,6 +293,71 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .sync-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:-18px 0 32px;font-size:15px;color:var(--ink-2)}
 .sync-note .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1FA463;margin-right:8px;vertical-align:1px}
 @media (max-width:480px){.nav a[data-nav="home"]{display:none}}
+.nav .sm{display:none}
+@media (max-width:480px){.nav .lg{display:none}.nav .sm{display:inline}}
+@media (max-width:360px){.brand svg{display:none}}
+.acct-menu .menu-link{display:block;margin-top:12px;font-size:14px;font-weight:600;color:var(--signal)}
+
+/* ---------- People + profiles ---------- */
+.av{width:48px;height:48px;border-radius:50%;overflow:hidden;background:var(--sunk);display:grid;place-items:center;font-family:var(--display);font-size:21px;color:var(--ink-2);flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.av.lg{width:76px;height:76px;font-size:32px}
+.av.sm{width:34px;height:34px;font-size:15px}
+.suggest .group{padding:9px 12px 3px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line)}
+.suggest a.person{grid-template-columns:34px 1fr}
+.people-search{display:flex;gap:10px;max-width:540px;margin-bottom:8px}
+.people-search .at{flex:1}
+.at{position:relative}
+.at>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-2);pointer-events:none;font-size:16px}
+.at input{width:100%;height:46px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 14px 0 32px;font-size:16px;outline:none}
+.at input:focus,.field input:focus{border-color:var(--signal);box-shadow:0 0 0 3px var(--signal-soft)}
+.people{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--line);max-width:720px}
+.people a{display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line)}
+.people a:hover b{text-decoration:underline;text-underline-offset:3px}
+.people b{display:block;font-size:17px;font-weight:600;line-height:1.3}
+.people small{display:block;font-size:14px;color:var(--ink-2)}
+.hint{margin:14px 0 0;font-size:15px;color:var(--ink-2);max-width:60ch}
+.hint a{color:var(--signal);font-weight:500}
+.prof-head{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.prof-head h1{font-family:var(--display);font-size:clamp(32px,4.6vw,52px);line-height:1.02;letter-spacing:-.02em}
+.prof-head .handle{margin:4px 0 0;font-size:16px;color:var(--ink-2)}
+.prof-head .tools{margin-left:auto}
+.back{display:inline-block;margin-bottom:18px;font-size:15px;font-weight:500;color:var(--signal)}
+.mine .you{font-size:14px;color:var(--ink)}
+.profile-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:0 0 32px;max-width:720px}
+.profile-card h2{font-size:17px;font-weight:600}
+.profile-card>p{margin:6px 0 0;font-size:15px;color:var(--ink-2);max-width:60ch}
+.profile-card .who{display:flex;align-items:center;gap:14px}
+.profile-card .who b{display:block;font-size:17px;font-weight:600}
+.profile-card .who small{display:block;font-size:14px;color:var(--ink-2)}
+.profile-card .who .btn{margin-left:auto}
+.field{display:grid;gap:6px;margin-top:16px;max-width:420px}
+.field>label{font-size:14px;font-weight:600}
+.field>input{height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 14px;font-size:16px;outline:none}
+.field .at input{height:44px}
+.field small{font-size:13px;color:var(--ink-2)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:15px;max-width:56ch}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--signal);flex:none}
+.form-err{margin:12px 0 0;font-size:14px;color:#C2362B}
+@media (prefers-color-scheme:dark){.form-err{color:#FF8A80}}
+.form-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.linkrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.linkrow input{flex:1 1 220px;min-width:0;height:40px;border:1px solid var(--line);border-radius:7px;background:var(--paper);padding:0 12px;font-size:14px;color:var(--ink-2)}
+.share-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.ep.compact{grid-template-columns:52px minmax(0,1fr) auto}
+.ep.compact .ep-rate{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ep-rate .you{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.ep-rate .you b{color:var(--ink);font-weight:600}
+@media (max-width:1024px){.ep.compact .ep-rate{grid-column:auto;justify-self:end;margin-top:0}}
+@media (max-width:760px){
+  .ep.compact{grid-template-columns:30px minmax(0,1fr)}
+  .ep.compact .ep-rate{grid-column:2;justify-self:start;flex-direction:row;align-items:center;gap:14px;margin-top:8px}
+  .prof-head{gap:14px}
+  .av.lg{width:60px;height:60px;font-size:26px}
+  .prof-head .tools{margin-left:0;width:100%}
+  .profile-card{padding:16px}
+  .people-search{flex-direction:column}
+}
 @media (max-width:420px){.nav{gap:12px}.btn.signin{width:36px;padding:0}.btn.signin span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -311,7 +376,8 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
     </form>
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Browse</a>
-      <a href="#/mine" data-nav="mine">Your ratings</a>
+      <a href="#/mine" data-nav="mine"><span class="lg">Your ratings</span><span class="sm">Ratings</span></a>
+      <a href="#/people" data-nav="people" id="nav-people" hidden>People</a>
       <div class="account" id="account"></div>
     </nav>
   </div>
@@ -335,12 +401,12 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
    ratings in the browser only.
    ===================================================================== */
 const FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyB1UT7miBqm9WrjR2VlrJ4eMisEN8mscZU',
-  authDomain: 'episodic-917d6.firebaseapp.com',
-  projectId: 'episodic-917d6',
-  storageBucket: 'episodic-917d6.firebasestorage.app',
-  messagingSenderId: '83988660056',
-  appId: '1:83988660056:web:5ad429defd86a66fab6f2d'
+  apiKey: '',
+  authDomain: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: '',
+  appId: ''
 };
 const FIREBASE_VERSION = '10.14.1';
 
@@ -388,6 +454,10 @@ let fb = null;      // { auth, db, au, fs } once Firebase has loaded
 let user = null;    // { uid, name, email, photo } while signed in
 let unsub = null;   // live-sync listener
 let authReady = false;
+let myProfile = undefined; // undefined while loading, null if the user has no profile yet
+let fbReadyDone, authSettledDone;
+const fbReady = new Promise(r => { fbReadyDone = r; });       // resolves to fb, or null without accounts
+const authSettled = new Promise(r => { authSettledDone = r; }); // resolves once we know who's signed in
 const pending = new Set();
 let pushT;
 function localKey() { return user ? `${KEY}.${user.uid}` : KEY; }
@@ -406,6 +476,10 @@ async function push() {
       const ref = doc(fb.db, 'users', uid, 'shows', id);
       return store.shows[id] ? setDoc(ref, store.shows[id]) : deleteDoc(ref);
     }));
+    if (myProfile && user && user.uid === uid) {
+      myProfile.stats = computeStats();
+      setDoc(doc(fb.db, 'profiles', uid), { stats: myProfile.stats, updated: Date.now() }, { merge: true }).catch(console.error);
+    }
   } catch (e) {
     console.error(e);
     if (user && user.uid === uid) { ids.forEach(i => pending.add(i)); clearTimeout(pushT); pushT = setTimeout(push, 5000); }
@@ -414,17 +488,19 @@ async function push() {
 }
 
 async function initAccounts() {
-  if (!accountsOn) { renderAccount(); return; }
+  if (!accountsOn) { renderAccount(); fbReadyDone(null); authSettledDone(); return; }
+  $('#nav-people').hidden = false;
   const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/`;
   try {
     const [a, au, fs] = await Promise.all(['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => import(base + f)));
     const fbApp = a.initializeApp(FIREBASE_CONFIG);
     fb = { auth: au.getAuth(fbApp), db: fs.initializeFirestore(fbApp, { ignoreUndefinedProperties: true }), au, fs };
+    fbReadyDone(fb);
     au.getRedirectResult(fb.auth).catch(authError);
     au.onAuthStateChanged(fb.auth, onUser);
   } catch (e) {
     console.error('Firebase failed to load', e);
-    fb = null; authReady = true; renderAccount();
+    fb = null; authReady = true; renderAccount(); fbReadyDone(null); authSettledDone();
   }
 }
 
@@ -432,8 +508,11 @@ function onUser(u) {
   authReady = true;
   if (unsub) { unsub(); unsub = null; }
   user = u ? { uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '' } : null;
+  myProfile = user ? undefined : null;
   renderAccount();
+  authSettledDone();
   if (!user) { store = load(); rerender(); return; }
+  loadMyProfile();
 
   // Show what this device already has for the account, then sync with the cloud.
   try { const d = JSON.parse(localStorage.getItem(localKey())); store = d && d.shows ? d : { version: 2, shows: {} }; }
@@ -526,7 +605,7 @@ function renderAccount() {
   const initial = esc((user.name || user.email || '?').trim()[0].toUpperCase());
   el.innerHTML = `<div class="acct">
     <button type="button" class="avatar" id="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Account: ${esc(user.name || user.email)}">${user.photo ? `<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">` : initial}</button>
-    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span><button type="button" class="btn" id="signout">Sign out</button></div></div>`;
+    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span>${myProfile ? `<a class="menu-link" href="#/u/${esc(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-link" href="#/mine">Pick a username so friends can find you</a>` : ''}<button type="button" class="btn" id="signout">Sign out</button></div></div>`;
   note.textContent = `Your ratings are saved to your Google account (${user.email}), so they show up wherever you sign in.`;
   $('#avatar').onclick = e => { e.stopPropagation(); setMenu($('#acct-menu').hidden); };
   $('#signout').onclick = () => { setMenu(false); signOut(); };
@@ -538,7 +617,7 @@ function setMenu(open) {
 }
 document.addEventListener('click', e => {
   if (e.target.closest('[data-signin]')) signIn();
-  if (!e.target.closest('.acct')) setMenu(false);
+  if (!e.target.closest('.acct') || e.target.closest('.acct-menu a')) setMenu(false);
 });
 document.addEventListener('keydown', e => {
   const menu = $('#acct-menu');
@@ -685,6 +764,13 @@ function route() {
     window.scrollTo(0, 0); renderShow(sid, season);
   } else if (parts[0] === 'search') { window.scrollTo(0, 0); renderSearch(decodeURIComponent(parts.slice(1).join('/'))); }
   else if (parts[0] === 'mine') { window.scrollTo(0, 0); renderMine(); }
+  else if (parts[0] === 'people') { window.scrollTo(0, 0); renderPeople(decodeURIComponent(parts[1] || '')); }
+  else if (parts[0] === 'u' && parts[1]) {
+    window.scrollTo(0, 0);
+    const name = decodeURIComponent(parts[1]);
+    if (parts[2] === 'show' && parts[3]) renderTheirShow(name, +parts[3], parts[4] === 'season' ? +parts[5] : null);
+    else renderProfile(name);
+  }
   else { window.scrollTo(0, 0); renderHome(); }
 }
 window.addEventListener('hashchange', route);
@@ -759,10 +845,15 @@ qIn.addEventListener('input', () => {
   if (q.length < 2) { closeSug(); return; }
   sugT = setTimeout(async () => {
     try {
-      const r = await api('/search/shows?q=' + encodeURIComponent(q));
+      const [r, people] = await Promise.all([
+        api('/search/shows?q=' + encodeURIComponent(q)).catch(() => []),
+        fb ? searchPeople(q, 3).catch(() => []) : []
+      ]);
       if (qIn.value.trim() !== q) return;
-      sug.innerHTML = r.slice(0, 6).map(({ show: s }) => `<a href="#/show/${s.id}">${s.image ? `<img src="${esc(s.image.medium)}" alt="">` : `<div class="ph"></div>`}<div><b>${esc(s.name)}</b><small>${esc([yearsOf(s), netOf(s)].filter(Boolean).join(', '))}</small></div></a>`).join('')
-        + `<a class="all" href="#/search/${encodeURIComponent(q)}">Show all results for “${esc(q)}”</a>`;
+      if (!r.length && !people.length) { closeSug(); return; }
+      sug.innerHTML = r.slice(0, people.length ? 5 : 6).map(({ show: s }) => `<a href="#/show/${s.id}">${s.image ? `<img src="${esc(s.image.medium)}" alt="">` : `<div class="ph"></div>`}<div><b>${esc(s.name)}</b><small>${esc([yearsOf(s), netOf(s)].filter(Boolean).join(', '))}</small></div></a>`).join('')
+        + (people.length ? `<div class="group">People</div>` + people.map(pp => `<a class="person" href="#/u/${esc(pp.username)}">${avatarHTML(pp, 'sm')}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}</small></div></a>`).join('') : '')
+        + `<a class="all" href="#/search/${encodeURIComponent(q)}">Show all series results for “${esc(q)}”</a>`;
       sug.classList.add('open'); sugIdx = -1;
     } catch (e) {}
   }, 220);
@@ -787,6 +878,16 @@ document.addEventListener('click', e => { if (!e.target.closest('.search')) clos
 sug.addEventListener('click', () => { closeSug(); qIn.value = ''; });
 
 /* ---------- Show page ---------- */
+function groupEpisodes(d) {
+  const eps = ((d._embedded && d._embedded.episodes) || []).filter(e => e.season != null);
+  const bySeason = new Map();
+  for (const e of eps) { if (!bySeason.has(e.season)) bySeason.set(e.season, []); bySeason.get(e.season).push(e); }
+  bySeason.forEach(l => l.sort((a, b) => (a.number ?? 999) - (b.number ?? 999)));
+  const seasons = ((d._embedded && d._embedded.seasons) || []).slice();
+  bySeason.forEach((_, n) => { if (!seasons.some(s => s.number === n)) seasons.push({ number: n }); });
+  seasons.sort((a, b) => a.number - b.number);
+  return { eps, bySeason, seasons };
+}
 async function renderShow(showId, seasonNum) {
   const id = ++renderId; current = null; setNav('show');
   app.innerHTML = `<div class="wrap page"><div class="show-head"><div class="show-poster skel"></div><div class="show-title"><div class="skel skel-line" style="height:48px;width:60%"></div><div class="skel skel-line" style="width:35%"></div></div></div></div>`;
@@ -800,13 +901,7 @@ async function renderShow(showId, seasonNum) {
     return;
   }
   if (id !== renderId) return;
-  const eps = ((d._embedded && d._embedded.episodes) || []).filter(e => e.season != null);
-  const bySeason = new Map();
-  for (const e of eps) { if (!bySeason.has(e.season)) bySeason.set(e.season, []); bySeason.get(e.season).push(e); }
-  bySeason.forEach(l => l.sort((a, b) => (a.number ?? 999) - (b.number ?? 999)));
-  const seasons = ((d._embedded && d._embedded.seasons) || []).slice();
-  bySeason.forEach((_, n) => { if (!seasons.some(s => s.number === n)) seasons.push({ number: n }); });
-  seasons.sort((a, b) => a.number - b.number);
+  const { eps, bySeason, seasons } = groupEpisodes(d);
   const list = Array.isArray(imgs) ? imgs : [];
   const bd = list.find(i => i.type === 'background' && i.main) || list.find(i => i.type === 'background') || list.find(i => i.type === 'banner');
   const backdrop = bd && bd.resolutions && (bd.resolutions.original || bd.resolutions.medium || {}).url;
@@ -838,7 +933,8 @@ function drawShow(seasonNum) {
       <div class="show-body">
         <dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
         <div class="my-score"><h2>Your score for the series</h2><div id="series-meter"></div>
-          <div class="track"><span id="prog" style="width:0"></span></div><p id="prog-text"></p></div>
+          <div class="track"><span id="prog" style="width:0"></span></div><p id="prog-text"></p>
+          ${user ? `<div class="share-row"><button type="button" class="btn" id="share-mine">Share your scores</button></div>` : ''}</div>
         ${summary ? `<p class="summary">${esc(summary)}</p>` : ''}
       </div>
     </section>
@@ -856,6 +952,12 @@ function drawShow(seasonNum) {
     const r = ensureRec(); r.showRating = v; commit(r);
     toast(v ? `Scored ${s.name} ${v}/10` : 'Series score removed');
   }, { size: 'lg', label: `Your score for ${s.name}`, prompt: 'Tap a bar to score' }));
+  const shareBtn = $('#share-mine');
+  if (shareBtn) shareBtn.onclick = () => {
+    if (myProfile && myProfile.public) share(linkTo(`/u/${myProfile.username}/show/${s.id}`), `${myProfile.name || myProfile.username}'s scores for ${s.name}`);
+    else if (myProfile) toast('Your profile is private. Turn on sharing on Your ratings first.');
+    else { toast('Pick a username first, then you can share.'); location.hash = '#/mine'; }
+  };
   const nav = $('#season-nav');
   if (nav) nav.onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
@@ -987,9 +1089,11 @@ function refreshSeasonAvg() {
 }
 function drawGridmap() {
   const box = $('#gridmap'); if (!box || !current) return;
-  const er = (store.shows[current.show.id] || {}).episodes || {};
-  box.innerHTML = current.seasons.filter(se => (current.bySeason.get(se.number) || []).length).map(se =>
-    `<div class="gm-row"><b>S${se.number}</b><div class="gm-cells">${current.bySeason.get(se.number).map(e => {
+  box.innerHTML = gridmapHTML(current.seasons, current.bySeason, (store.shows[current.show.id] || {}).episodes || {});
+}
+function gridmapHTML(seasons, bySeason, er) {
+  return seasons.filter(se => (bySeason.get(se.number) || []).length).map(se =>
+    `<div class="gm-row"><b>S${se.number}</b><div class="gm-cells">${bySeason.get(se.number).map(e => {
       const v = er[e.id] && er[e.id].r, aired = isAired(e);
       const tip = `Season ${e.season}, episode ${e.number ?? 'special'}: ${e.name}. ${v ? `Scored ${v}` : aired ? 'Not scored' : 'Not aired yet'}`;
       const h = v ? heat(v) : null;
@@ -1016,11 +1120,12 @@ function renderMine() {
         <label class="btn" style="cursor:pointer">Import<input type="file" id="import" accept="application/json,.json" hidden></label>
       </div></div>
     <p class="recap">${recap}</p>
-    ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p>`
+    ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p><section class="profile-card" id="profile-card" aria-label="Your profile"></section>`
       : fb && authReady ? `<p class="sync-note"><span>Sign in to keep these in your account and see them on any device.</span><button type="button" class="btn google" data-signin>${GOOGLE_G}Sign in with Google</button></p>` : ''}
     <ul class="mine" id="mine"></ul>
     ${list.length ? '' : '<a class="btn primary" href="#/">Browse series</a>'}
   </section>`;
+  if ($('#profile-card')) renderProfileCard();
   const epAvg = r => avgOf(Object.values(r.episodes).map(e => e.r));
   const draw = () => {
     const sort = $('#sort') ? $('#sort').value : 'recent';
@@ -1076,6 +1181,379 @@ function renderMine() {
     fr.readAsText(f);
   };
   draw();
+}
+
+/* ---------- Profiles, people search and sharing ----------
+   Firestore layout:
+     usernames/{username}     -> { uid }                 one doc per taken username
+     profiles/{uid}           -> { username, name, photo, public, stats, updated }
+     users/{uid}/shows/{id}   -> ratings (readable by others only when the profile is public)
+*/
+const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+const cleanName = q => String(q || '').trim().toLowerCase().replace(/^@/, '').replace(/[^a-z0-9_]/g, '');
+const linkTo = path => location.href.split('#')[0] + '#' + path;
+const firstName = pr => (pr.name || pr.username || '').split(/\s+/)[0];
+function avatarHTML(pr, size = '') {
+  const letter = esc(((pr.name || pr.username || '?').trim()[0] || '?').toUpperCase());
+  return `<span class="av ${size}">${pr.photo ? `<img src="${esc(pr.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : letter}</span>`;
+}
+function computeStats() {
+  const list = Object.values(store.shows);
+  const all = list.flatMap(r => Object.values(r.episodes || {}));
+  return { series: list.length, episodes: all.length, avg: all.length ? Math.round(avgOf(all.map(e => e.r)) * 10) / 10 : 0 };
+}
+function statsLine(st) {
+  if (!st || !(st.series || st.episodes)) return 'No scores yet';
+  return `${plural(st.series || 0, 'series')}, ${plural(st.episodes || 0, 'episode')} scored`;
+}
+async function share(url, title) {
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+    try { await navigator.share({ title, url }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  copyLink(url);
+}
+async function copyLink(url) {
+  try { await navigator.clipboard.writeText(url); toast('Link copied'); }
+  catch (e) { window.prompt('Copy this link', url); }
+}
+
+async function loadMyProfile() {
+  const uid = user && user.uid;
+  if (!uid || !fb) return;
+  const { doc, getDoc, setDoc } = fb.fs;
+  try {
+    const snap = await getDoc(doc(fb.db, 'profiles', uid));
+    if (!user || user.uid !== uid) return;
+    myProfile = snap.exists() ? snap.data() : null;
+    if (myProfile && user.photo && myProfile.photo !== user.photo) {
+      myProfile.photo = user.photo;
+      setDoc(doc(fb.db, 'profiles', uid), { photo: user.photo }, { merge: true }).catch(() => {});
+    }
+  } catch (e) { console.error(e); myProfile = null; }
+  renderAccount();
+  const v = app.dataset.view;
+  if (v === 'mine' && $('#profile-card')) renderProfileCard();
+  else if (v === 'people' && $('#me-hint')) renderMeHint();
+}
+
+async function saveProfile({ username, name, isPublic }) {
+  const { doc, runTransaction } = fb.fs;
+  const uid = user.uid, prev = myProfile && myProfile.username;
+  const data = { username, name, photo: user.photo || '', public: isPublic, stats: computeStats(), updated: Date.now() };
+  await runTransaction(fb.db, async tx => {
+    const ref = doc(fb.db, 'usernames', username);
+    const snap = await tx.get(ref);
+    if (snap.exists() && snap.data().uid !== uid) throw Object.assign(new Error('taken'), { code: 'taken' });
+    if (!snap.exists()) tx.set(ref, { uid });
+    if (prev && prev !== username) tx.delete(doc(fb.db, 'usernames', prev));
+    tx.set(doc(fb.db, 'profiles', uid), data);
+  });
+  myProfile = data;
+}
+
+/* Find public profiles whose username starts with q. */
+async function searchPeople(q, n = 10) {
+  const s = cleanName(q);
+  if (!s || !fb) return [];
+  const { collection, query, where, documentId, limit, getDocs, getDoc, doc } = fb.fs;
+  const snap = await getDocs(query(collection(fb.db, 'usernames'), where(documentId(), '>=', s), where(documentId(), '<=', s + ''), limit(n * 2)));
+  const found = await Promise.all(snap.docs.map(async d => {
+    try {
+      const p = await getDoc(doc(fb.db, 'profiles', d.data().uid));
+      return p.exists() && p.data().public ? { ...p.data(), uid: p.id } : null;
+    } catch (e) { return null; }
+  }));
+  return found.filter(Boolean).slice(0, n);
+}
+
+/* Look up one profile by username. Returns null (no such user), {private:true}, or the profile. */
+async function findProfile(name) {
+  const { doc, getDoc } = fb.fs;
+  const s = cleanName(name);
+  if (!s) return null;
+  const u = await getDoc(doc(fb.db, 'usernames', s));
+  if (!u.exists()) return null;
+  const uid = u.data().uid;
+  try {
+    const p = await getDoc(doc(fb.db, 'profiles', uid));
+    if (!p.exists()) return null;
+    const d = p.data();
+    const own = !!(user && user.uid === uid);
+    if (!d.public && !own) return { private: true };
+    return { ...d, uid, own };
+  } catch (e) {
+    if (e.code === 'permission-denied') return { private: true };
+    throw e;
+  }
+}
+
+function renderProfileCard() {
+  const box = $('#profile-card'); if (!box) return;
+  if (myProfile === undefined) { box.innerHTML = `<p class="dim" style="margin:0">Loading your profile…</p>`; return; }
+  if (!myProfile) { profileForm(box, null); return; }
+  const url = linkTo(`/u/${myProfile.username}`);
+  box.innerHTML = `
+    <div class="who">${avatarHTML(myProfile)}<div><b>${esc(myProfile.name || myProfile.username)}</b><small>@${esc(myProfile.username)}, ${myProfile.public ? 'anyone with the link can see your ratings' : 'private, only you can see your ratings'}</small></div>
+      <button type="button" class="btn quiet" id="edit-profile">Edit</button></div>
+    ${myProfile.public ? `<div class="linkrow"><label class="sr" for="my-link">Your profile link</label><input id="my-link" value="${esc(url)}" readonly><button type="button" class="btn" id="copy-my">Copy link</button><a class="btn" href="#/u/${esc(myProfile.username)}">View profile</a></div>` : ''}`;
+  $('#edit-profile').onclick = () => profileForm(box, myProfile);
+  const c = $('#copy-my'); if (c) c.onclick = () => copyLink(url);
+  const inp = $('#my-link'); if (inp) inp.onfocus = () => inp.select();
+}
+
+function profileForm(box, prof) {
+  const fresh = !prof;
+  box.innerHTML = `
+    <h2>${fresh ? 'Share your ratings with friends' : 'Edit your profile'}</h2>
+    ${fresh ? '<p>Pick a username. You get a profile link to send to friends, and people can find you by searching for it.</p>' : ''}
+    <form id="profile-form" novalidate>
+      <div class="field"><label for="pf-user">Username</label>
+        <div class="at"><span aria-hidden="true">@</span><input id="pf-user" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="20" value="${esc(prof ? prof.username : '')}" placeholder="madhup" required></div>
+        <small>3 to 20 characters: lowercase letters, numbers and underscores.</small></div>
+      <div class="field"><label for="pf-name">Display name</label><input id="pf-name" maxlength="40" value="${esc(prof ? prof.name : user.name)}"></div>
+      <label class="check"><input type="checkbox" id="pf-public" ${!prof || prof.public ? 'checked' : ''}><span>Let anyone with my link, or who searches my username, see my ratings</span></label>
+      <p class="form-err" id="pf-err" role="alert" hidden></p>
+      <div class="form-acts"><button class="btn primary" type="submit">${fresh ? 'Create profile' : 'Save changes'}</button>${fresh ? '' : '<button class="btn quiet" type="button" id="pf-cancel">Cancel</button>'}</div>
+    </form>`;
+  const u = $('#pf-user'), err = $('#pf-err');
+  u.oninput = () => { const v = u.value.toLowerCase().replace(/[^a-z0-9_]/g, ''); if (v !== u.value) u.value = v; err.hidden = true; };
+  const cancel = $('#pf-cancel'); if (cancel) cancel.onclick = renderProfileCard;
+  $('#profile-form').onsubmit = async e => {
+    e.preventDefault();
+    const username = u.value, name = $('#pf-name').value.trim() || user.name || username, isPublic = $('#pf-public').checked;
+    const fail = m => { err.textContent = m; err.hidden = false; };
+    if (!USERNAME_RE.test(username)) return fail('Usernames need 3 to 20 characters: lowercase letters, numbers or underscores.');
+    const btn = e.submitter || $('button[type=submit]', e.target);
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await saveProfile({ username, name, isPublic });
+      toast(fresh ? 'Profile created' : 'Profile saved');
+      renderAccount(); renderProfileCard();
+    } catch (x) {
+      console.error(x);
+      btn.disabled = false; btn.textContent = fresh ? 'Create profile' : 'Save changes';
+      fail(x.code === 'taken' ? `@${username} is taken. Try another username.`
+        : x.code === 'permission-denied' ? 'The database rules blocked this. Update your Firestore rules to the new ones, then try again.'
+        : 'Your profile didn’t save. Check your internet connection and try again.');
+    }
+  };
+}
+
+function renderMeHint() {
+  const box = $('#me-hint'); if (!box) return;
+  box.innerHTML = !user ? `Sign in to get your own profile. <button type="button" class="btn google" data-signin style="margin-left:6px">${GOOGLE_G}Sign in with Google</button>`
+    : myProfile === null ? `You don’t have a username yet. <a href="#/mine">Pick one on Your ratings</a> so friends can find you.`
+    : myProfile ? `Your profile is <a href="#/u/${esc(myProfile.username)}">@${esc(myProfile.username)}</a>${myProfile.public ? '' : ' (private)'}.` : '';
+}
+
+/* People page */
+async function renderPeople(q) {
+  const id = ++renderId; current = null; setNav('people'); setTitle('People');
+  app.innerHTML = `
+  <section class="wrap page">
+    <div class="page-head"><h1>People</h1></div>
+    <p class="recap">Find friends by username and see how they score the shows you watch.</p>
+    <form class="people-search" id="people-form" role="search">
+      <div class="at"><span aria-hidden="true">@</span><label class="sr" for="people-q">Search by username</label><input id="people-q" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="username" value="${esc(q)}" enterkeyhint="search"></div>
+    </form>
+    <p class="hint" id="me-hint"></p>
+    <ul class="people" id="people"></ul>
+  </section>`;
+  const f = await fbReady;
+  if (id !== renderId) return;
+  if (!f) { $('#people').outerHTML = `<div class="empty" style="margin-top:20px">Accounts aren’t set up on this site yet, so there’s no one to find.</div>`; return; }
+  await authSettled;
+  if (id !== renderId) return;
+  renderMeHint();
+  const input = $('#people-q'), out = $('#people');
+  let t, seq = 0;
+  const run = async () => {
+    const term = cleanName(input.value);
+    history.replaceState(null, '', term ? `#/people/${encodeURIComponent(term)}` : '#/people');
+    const my = ++seq;
+    if (!term) { out.innerHTML = ''; return; }
+    out.innerHTML = `<li class="hint" style="padding:14px 4px">Searching…</li>`;
+    try {
+      const res = await searchPeople(term, 12);
+      if (my !== seq || id !== renderId) return;
+      out.innerHTML = res.length ? res.map(pp => `<li><a href="#/u/${esc(pp.username)}">${avatarHTML(pp)}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}${user && pp.uid === user.uid ? ' (you)' : ''}. ${esc(statsLine(pp.stats))}</small></div></a></li>`).join('')
+        : `<li class="hint" style="padding:14px 4px">No one’s username starts with “${esc(term)}”. Check the spelling, or ask your friend for their profile link.</li>`;
+    } catch (e) {
+      if (my !== seq) return;
+      console.error(e);
+      out.innerHTML = `<li class="hint" style="padding:14px 4px">Search didn’t go through. Check your internet connection.</li>`;
+    }
+  };
+  input.oninput = () => { clearTimeout(t); t = setTimeout(run, 250); };
+  $('#people-form').onsubmit = e => { e.preventDefault(); clearTimeout(t); run(); input.blur(); };
+  if (q) run(); else input.focus({ preventScroll: true });
+}
+
+function profileGate(prof, name) {
+  if (!prof) return `<div class="empty">There’s no one called @${esc(cleanName(name))} on Tenbars. Check the link, or <a href="#/people" style="color:var(--signal)">search for people</a>.</div>`;
+  if (prof.private) return `<div class="empty">@${esc(cleanName(name))} keeps their ratings private.</div>`;
+  return '';
+}
+
+/* A user's public profile */
+async function renderProfile(name) {
+  const id = ++renderId; current = null; setNav('people'); setTitle('@' + cleanName(name));
+  app.innerHTML = `<section class="wrap page"><div class="prof-head"><span class="av lg skel"></span><div><div class="skel skel-line" style="height:36px;width:240px"></div><div class="skel skel-line" style="width:120px"></div></div></div></section>`;
+  const f = await fbReady;
+  if (id !== renderId) return;
+  if (!f) { app.innerHTML = `<section class="wrap page"><div class="empty">Profiles aren’t set up on this site yet.</div></section>`; return; }
+  await authSettled;
+  let prof, rows;
+  try {
+    prof = await findProfile(name);
+    if (prof && !prof.private) {
+      const { collection, getDocs } = fb.fs;
+      const snap = await getDocs(collection(fb.db, 'users', prof.uid, 'shows'));
+      rows = snap.docs.map(d => ({ ...d.data(), id: +d.id }));
+    }
+  } catch (e) {
+    if (id !== renderId) return;
+    console.error(e);
+    app.innerHTML = `<section class="wrap page"><div id="err"></div></section>`;
+    failBox($('#err'), 'This profile didn’t load. Check your internet connection.', () => renderProfile(name));
+    return;
+  }
+  if (id !== renderId) return;
+  const gate = profileGate(prof, name);
+  if (gate) { app.innerHTML = `<section class="wrap page">${gate}</section>`; return; }
+  setTitle(`${prof.name || prof.username} (@${prof.username})`);
+  const all = rows.flatMap(r => Object.values(r.episodes || {}));
+  const who = firstName(prof);
+  const recap = !rows.length ? `${esc(who)} hasn’t scored anything yet.`
+    : `${esc(who)} has scored <strong>${plural(all.length, 'episode')}</strong> across <strong>${plural(rows.length, 'series')}</strong>.`
+      + (all.length ? ` Their average episode score is <strong>${one(avgOf(all.map(e => e.r)))}</strong>.` : '');
+  app.innerHTML = `
+  <section class="wrap page">
+    <div class="prof-head">${avatarHTML(prof, 'lg')}<div><h1>${esc(prof.name || prof.username)}</h1><p class="handle">@${esc(prof.username)}</p></div>
+      <div class="tools">${rows.length ? `<label class="sr" for="psort">Sort by</label><select class="btn" id="psort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="name">Name</option></select>` : ''}
+        <button type="button" class="btn" id="share-prof">Share profile</button>${prof.own ? '<a class="btn" href="#/mine">Edit profile</a>' : ''}</div></div>
+    <p class="recap" style="margin-top:20px">${recap}${prof.own && !prof.public ? ' Your profile is private, so only you can see this page.' : ''}</p>
+    <ul class="mine" id="their-list"></ul>
+  </section>`;
+  $('#share-prof').onclick = () => share(linkTo(`/u/${prof.username}`), `${prof.name || prof.username} on Tenbars`);
+  const epAvg = r => avgOf(Object.values(r.episodes || {}).map(e => e.r));
+  const draw = () => {
+    const sort = $('#psort') ? $('#psort').value : 'recent';
+    const sorted = rows.slice().sort((a, b) => sort === 'name' ? (a.name || '').localeCompare(b.name || '')
+      : sort === 'top' ? (b.showRating || epAvg(b)) - (a.showRating || epAvg(a)) : (b.updated || 0) - (a.updated || 0));
+    const box = $('#their-list');
+    box.innerHTML = sorted.map(r => {
+      const n = Object.keys(r.episodes || {}).length, mine = !prof.own && store.shows[r.id];
+      const href = `#/u/${esc(prof.username)}/show/${r.id}`;
+      return `<li data-id="${r.id}">
+        <a href="${href}" class="poster" tabindex="-1">${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy">` : `<div class="ph">${initials(r.name)}</div>`}</a>
+        <div><h3><a href="${href}">${esc(r.name)}</a></h3>
+          <p class="sub">${esc([r.years, r.seasons ? plural(r.seasons, 'season') : ''].filter(Boolean).join(', '))}</p>
+          <div class="row"><span class="slot"></span><span>${n}${r.total ? ` of ${r.total}` : ''} episodes scored${n ? `, average ${one(epAvg(r))}` : ''}</span>${mine && mine.showRating ? `<span class="you">You gave it ${mine.showRating}</span>` : ''}</div></div>
+        <div class="acts"><a class="btn" href="${href}">See scores</a></div></li>`;
+    }).join('');
+    sorted.forEach(r => $(`li[data-id="${r.id}"] .slot`, box).append(meter(r.showRating, null, { size: 'sm' })));
+  };
+  if ($('#psort')) $('#psort').onchange = draw;
+  draw();
+}
+
+/* One user's scores for one show, next to yours */
+async function renderTheirShow(name, showId, seasonNum) {
+  const id = ++renderId; current = null; setNav('people');
+  app.innerHTML = `<div class="wrap page"><div class="show-head"><div class="show-poster skel"></div><div class="show-title"><div class="skel skel-line" style="height:48px;width:60%"></div><div class="skel skel-line" style="width:35%"></div></div></div></div>`;
+  const f = await fbReady;
+  if (id !== renderId) return;
+  if (!f) { app.innerHTML = `<section class="wrap page"><div class="empty">Profiles aren’t set up on this site yet.</div></section>`; return; }
+  await authSettled;
+  let prof, rec, d;
+  try {
+    prof = await findProfile(name);
+    if (prof && !prof.private) {
+      const { doc, getDoc } = fb.fs;
+      [rec, d] = await Promise.all([
+        getDoc(doc(fb.db, 'users', prof.uid, 'shows', String(showId))).then(x => x.exists() ? x.data() : null),
+        api(`/shows/${showId}?embed[]=seasons&embed[]=episodes`)
+      ]);
+    }
+  } catch (e) {
+    if (id !== renderId) return;
+    console.error(e);
+    app.innerHTML = `<section class="wrap page"><div id="err"></div></section>`;
+    failBox($('#err'), 'These scores didn’t load. Check your internet connection.', () => renderTheirShow(name, showId, seasonNum));
+    return;
+  }
+  if (id !== renderId) return;
+  const gate = profileGate(prof, name);
+  if (gate) { app.innerHTML = `<section class="wrap page">${gate}</section>`; return; }
+  const who = prof.name || prof.username, first = firstName(prof);
+  setTitle(`${d.name}: ${who}'s scores`);
+  const { eps, bySeason, seasons } = groupEpisodes(d);
+  const their = (rec && rec.episodes) || {};
+  const mineRec = !prof.own && store.shows[showId];
+  const mine = (mineRec && mineRec.episodes) || {};
+  const aired = eps.filter(isAired);
+  const rated = eps.filter(e => their[e.id]);
+  const both = eps.filter(e => their[e.id] && mine[e.id]);
+  const theirAvg = rated.length ? one(avgOf(rated.map(e => their[e.id].r))) : '';
+  const shareUrl = linkTo(`/u/${prof.username}/show/${showId}`);
+  let compare = '';
+  if (mineRec) {
+    const diff = both.length ? avgOf(both.map(e => their[e.id].r - mine[e.id].r)) : 0;
+    compare = `<p>You gave it ${mineRec.showRating ? `<strong>${mineRec.showRating}/10</strong>` : 'no series score'}.`
+      + (both.length ? ` On the ${plural(both.length, 'episode')} you’ve both scored, ${esc(first)} averages ${Math.abs(diff) < 0.05 ? 'the same as you' : `${one(Math.abs(diff))} ${diff > 0 ? 'higher' : 'lower'} than you`}.` : '') + '</p>';
+  }
+  app.innerHTML = `
+  <div class="wrap page">
+    <a class="back" href="#/u/${esc(prof.username)}">All of ${esc(first)}’s ratings</a>
+    <section class="show-head">
+      <div class="show-poster">${d.image ? `<img src="${esc(d.image.original || d.image.medium)}" alt="${esc(d.name)} poster">` : `<div class="ph">${initials(d.name)}</div>`}</div>
+      <div class="show-title"><h1>${esc(d.name)}</h1>
+        <div class="show-sub"><span>Scores by ${esc(who)}</span><span>@${esc(prof.username)}</span></div></div>
+      <div class="show-body">
+        <div class="my-score"><h2>${esc(first)}’s score for the series</h2><div id="their-meter"></div>
+          <p>${rec ? `${rated.length} of ${aired.length} aired episodes scored${theirAvg ? `, averaging ${theirAvg}` : ''}.` : `${esc(first)} hasn’t scored this series yet.`}</p>${compare}
+          <div class="share-row"><a class="btn primary" href="#/show/${showId}">${prof.own ? 'Edit your scores' : mineRec ? 'Open your scores' : 'Score it yourself'}</a><button type="button" class="btn" id="share-their">Share</button></div></div>
+      </div>
+    </section>
+    ${rec && eps.length ? `<section class="sec"><div class="sec-head"><h2>Every episode at a glance</h2></div>
+      <div class="gridmap"><div id="gridmap">${gridmapHTML(seasons, bySeason, their)}</div><div class="gm-key"><span>Lower<i></i>Higher</span><span>Select a square to jump to that episode.</span></div></div></section>` : ''}
+    ${rec && seasons.length ? `<section class="sec" style="padding-bottom:40px">
+      <div class="sec-head"><h2>Episodes</h2></div>
+      <div class="season-nav" role="tablist" id="season-nav">${seasons.map(se => {
+        const l = bySeason.get(se.number) || [], r = l.filter(e => their[e.id]);
+        return `<button type="button" role="tab" data-season="${se.number}"><b>Season ${se.number}</b><small>${plural(l.length, 'episode')}${r.length ? ` <span class="avg">avg ${one(avgOf(r.map(e => their[e.id].r)))}</span>` : ''}</small></button>`;
+      }).join('')}</div><div id="season-panel" role="tabpanel"></div></section>` : ''}
+  </div>`;
+  $('#their-meter').append(meter(rec && rec.showRating, null, { size: 'lg' }));
+  $('#share-their').onclick = () => share(shareUrl, `${who}'s scores for ${d.name}`);
+  if (!rec || !seasons.length) return;
+  const pick = n => {
+    $$('#season-nav button').forEach(t => { const on = +t.dataset.season === n; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
+    const list = bySeason.get(n) || [], panel = $('#season-panel');
+    panel.dataset.season = n;
+    const r = list.filter(e => their[e.id]);
+    panel.innerHTML = `<div class="season-head"><div><h3>Season ${n}</h3><p>${r.length ? `${esc(first)} scored ${r.length} of ${list.filter(isAired).length} aired episodes, averaging <strong>${one(avgOf(r.map(e => their[e.id].r)))}</strong>.` : `${esc(first)} hasn’t scored this season.`}</p></div></div>
+      <ol class="eps">${list.map(e => `<li class="ep compact" id="ep-${e.id}"><span class="ep-n">${e.number ?? 'Sp'}</span>
+        <div class="ep-main"><h4>${esc(e.name || 'Title not announced')}</h4>${e.airdate ? `<p class="ep-meta"><span>${esc(fmtDate(e.airdate))}</span></p>` : ''}</div>
+        <div class="ep-rate"></div></li>`).join('')}</ol>`;
+    list.forEach(e => {
+      const slot = $(`#ep-${e.id} .ep-rate`, panel);
+      if (!isAired(e)) { slot.innerHTML = `<span class="later-note">${e.airdate ? 'Airs ' + esc(fmtDate(e.airdate)) : 'Air date not announced'}</span>`; return; }
+      slot.append(meter(their[e.id] && their[e.id].r, null, { size: 'sm' }));
+      if (mineRec) slot.insertAdjacentHTML('beforeend', `<span class="you">${mine[e.id] ? `You: <b>${mine[e.id].r}</b>` : 'You: not scored'}</span>`);
+    });
+  };
+  $('#season-nav').onclick = e => { const b = e.target.closest('button'); if (!b) return; history.replaceState(null, '', `#/u/${prof.username}/show/${showId}/season/${b.dataset.season}`); pick(+b.dataset.season); };
+  $('#gridmap').onclick = e => {
+    const c = e.target.closest('.gm-cell'); if (!c || c.classList.contains('later')) return;
+    pick(+c.dataset.season);
+    const row = $('#ep-' + c.dataset.ep);
+    if (row) { row.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' }); row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 1400); }
+  };
+  const start = seasonNum && bySeason.has(seasonNum) ? seasonNum
+    : (seasons.find(se => (bySeason.get(se.number) || []).some(e => their[e.id])) || seasons.find(se => (bySeason.get(se.number) || []).length) || seasons[0]).number;
+  pick(start);
 }
 
 window.addEventListener('storage', e => { if (e.key === localKey() && !user) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
