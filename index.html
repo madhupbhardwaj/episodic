@@ -130,16 +130,38 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:34px;background
 .skel-line{height:12px;border-radius:4px;margin-top:10px}
 
 /* ---------- Meter (rating control, 1–10) ---------- */
-.meter{display:inline-flex;align-items:center;gap:12px;user-select:none;-webkit-user-select:none}
-.bars{display:flex;align-items:flex-end;gap:var(--g,3px);height:var(--h,22px);padding:2px 0;touch-action:manipulation;border-radius:3px}
-.bars i{display:block;width:var(--w,6px);border-radius:1.5px;background:var(--sunk);transition:background-color .12s}
+.meter{display:inline-flex;align-items:center;gap:12px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.bars{position:relative;display:flex;align-items:flex-end;gap:var(--g,3px);height:var(--h,22px);padding:2px 0;touch-action:manipulation;border-radius:3px}
+.bars i{display:block;flex:none;width:var(--w,6px);border-radius:1.5px;background:var(--sunk);transition:background-color .12s}
 .bars i.f{background:var(--signal)}
 .meter.preview .bars i.f{background:color-mix(in srgb,var(--signal) 55%,var(--sunk))}
-.meter.live .bars{cursor:pointer;touch-action:pan-y}
+.meter-read{display:inline-flex;flex-direction:column;justify-content:center}
 .meter-val{font-family:var(--display);font-size:var(--fs,20px);line-height:1;min-width:calc(var(--fs,20px) * 2.6);font-variant-numeric:tabular-nums}
 .meter-val small{font-family:var(--sans);font-size:.55em;color:var(--ink-2);margin-left:1px}
 .meter-val.none{font-family:var(--sans);font-size:14px;color:var(--ink-2)}
+/* The interactive version: bigger bars, a roomier hit area, a word for each score and a clear button */
+.meter.live{--h:30px;--w:10px;--g:4px;gap:14px}
+.meter.live .bars{cursor:pointer;touch-action:pan-y;height:calc(var(--h) + 12px);padding:6px;margin:-6px;border-radius:8px}
+.meter.live .bars:focus-visible{outline:2px solid var(--signal);outline-offset:0}
+.meter.live .bars i{background:color-mix(in srgb,var(--ink) 13%,transparent);border-radius:2px}
+.meter.live .bars i.f{background:var(--signal)}
+.meter.live.preview .bars i.f{background:color-mix(in srgb,var(--signal) 45%,transparent)}
+.meter.live.preview .bars i.at{background:var(--signal)}
+.meter.live .meter-read{width:calc(var(--fs,20px) * 3)}
+.meter.live .meter-val{min-width:0}
+.meter.live .meter-val.none{color:var(--signal);font-weight:600}
+.meter-word{font-size:12px;line-height:1.2;color:var(--ink-2);margin-top:4px;min-height:1.2em;white-space:nowrap}
+.meter.lg .meter-word{font-size:13px}
+.meter-clear{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;margin-left:-6px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink-2);cursor:pointer;visibility:hidden}
+.meter.scored .meter-clear{visibility:visible}
+.meter-clear:hover{background:var(--sunk);color:var(--ink)}
+.meter-clear:focus-visible{outline:2px solid var(--signal);outline-offset:1px}
+.tip{position:absolute;left:0;bottom:calc(100% + 4px);z-index:5;transform:translate(-50%,4px);background:var(--ink);color:var(--paper);font:600 14px/1 var(--sans);padding:7px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s,transform .12s,left .06s;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ink)}
+.tip.on{opacity:1;transform:translate(-50%,0)}
 .meter.lg{--h:40px;--w:11px;--g:5px;--fs:34px}
+.meter.live.lg{--h:40px;--w:14px;--g:5px}
+.meter.live.lg .meter-read{width:auto;min-width:calc(var(--fs) * 2.8)}
 .meter.sm{--h:16px;--w:4px;--g:2px;--fs:16px}
 .meter.pulse .bars i.f{animation:lift .32s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 22ms)}
 @keyframes lift{from{transform:scaleY(.4);transform-origin:bottom}to{transform:none}}
@@ -231,6 +253,10 @@ footer p{margin:0;max-width:72ch}
 footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));z-index:60;transform:translate(-50%,12px);opacity:0;pointer-events:none;background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:.2s;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.act{display:flex;align-items:center;gap:16px;padding:6px 8px 6px 16px;white-space:nowrap}
+.toast.act.show{pointer-events:auto}
+.toast-act{border:0;background:none;color:#2638E8;font:inherit;font-weight:700;padding:8px 10px;min-height:36px;border-radius:6px;cursor:pointer}
+@media (prefers-color-scheme:light){.toast-act{color:#AEB6FF}}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1024px){
@@ -268,7 +294,11 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
   .ep-thumb{display:none}
   .ep-main h4{font-size:16px}
   .ep-sum{font-size:14px}
-  .ep-rate{grid-column:2;margin-top:10px}
+  .ep-rate{grid-column:2;margin-top:12px;justify-self:stretch}
+  /* On phones the bars stretch across the row so every score is an easy thumb target */
+  .ep-rate .meter.live,.my-score .meter.live{display:flex;width:100%}
+  .ep-rate .meter.live .bars,.my-score .meter.live .bars{flex:1;justify-content:space-between;max-width:360px}
+  .ep-rate .meter.live .bars i,.my-score .meter.live .bars i{flex:1 1 0;width:auto;max-width:26px}
   .season-head img{width:56px}
   .mine li{grid-template-columns:52px minmax(0,1fr);gap:4px 14px}
   .mine .poster{width:52px}
@@ -438,8 +468,9 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 /* ---------- Touch screens (and any phone-width screen): bigger targets ---------- */
 @media (pointer:coarse),(max-width:760px){
-  .meter.live{--h:36px;--w:12px;--g:5px}
-  .meter.live .bars{padding:6px 0}
+  .meter.live{--h:38px;--w:14px;--g:5px}
+  .meter.live.lg{--h:44px;--w:16px;--g:6px}
+  .meter-clear{width:44px;height:44px;margin-left:-10px}
   .nav a{padding:12px 0}
   .brand{min-height:44px}
   .filters button{min-height:44px}
@@ -823,7 +854,15 @@ function isAired(ep) {
   return false;
 }
 const heat = v => ({ c: `color-mix(in srgb, var(--signal) ${Math.round(18 + v * 8.2)}%, var(--sunk))`, t: v >= 6 ? 'var(--signal-ink)' : 'var(--ink)' });
-function toast(m, ms = 2000) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
+function toast(m, ms = 2000, action) {
+  const t = $('#toast'); t.textContent = m;
+  if (action) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toast-act'; b.textContent = action.label;
+    b.onclick = () => { t.classList.remove('show'); action.run(); };
+    t.append(b);
+  }
+  t.classList.toggle('act', !!action); t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
 function setTitle(t) { document.title = t ? `${t} | Tenbars` : 'Tenbars'; }
 function setNav(v) { document.body.dataset.view = v || 'other'; $$('[data-nav]').forEach(a => { const on = a.dataset.nav === v; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); }); app.dataset.view = v; }
 const skeletons = n => Array.from({ length: n }, () => `<div><div class="poster skel"></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-line" style="width:45%"></div></div>`).join('');
@@ -833,53 +872,89 @@ function failBox(target, msg, retry) {
 }
 
 /* ---------- Meter: the rating control (1–10) ---------- */
+const SCORE_WORDS = ['', 'Awful', 'Bad', 'Poor', 'Meh', 'Okay', 'Decent', 'Good', 'Great', 'Superb', 'Perfect'];
 function meter(value, onChange, opt = {}) {
+  const live = !!onChange;
   const el = document.createElement('div');
-  el.className = 'meter ' + (opt.size || '') + (onChange ? ' live' : '');
-  el.innerHTML = `<div class="bars">${Array.from({ length: 10 }, (_, i) => `<i style="height:${28 + i * 8}%;--i:${i}"></i>`).join('')}</div><span class="meter-val"></span>`;
-  const bars = el.firstElementChild, val = el.lastElementChild, cells = [...bars.children];
+  el.className = 'meter ' + (opt.size || '') + (live ? ' live' : '');
+  el.innerHTML = `<div class="bars">${Array.from({ length: 10 }, (_, i) => `<i style="height:${28 + i * 8}%;--i:${i}"></i>`).join('')}${live ? '<span class="tip" aria-hidden="true"></span>' : ''}</div>`
+    + `<span class="meter-read"><span class="meter-val"></span>${live ? '<span class="meter-word" aria-hidden="true"></span>' : ''}</span>`
+    + (live ? `<button type="button" class="meter-clear" aria-label="Clear this score" title="Clear score"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>` : '');
+  const bars = $('.bars', el), val = $('.meter-val', el), word = $('.meter-word', el), tip = $('.tip', el), clr = $('.meter-clear', el), cells = $$('i', bars);
   let cur = value || 0;
   const paint = (v, preview) => {
-    cells.forEach((c, i) => c.classList.toggle('f', i < v));
+    cells.forEach((c, i) => { c.classList.toggle('f', i < v); c.classList.toggle('at', i === v - 1); });
     el.classList.toggle('preview', !!preview);
     if (v) { val.className = 'meter-val'; val.innerHTML = `${v}<small>/10</small>`; }
-    else { val.className = 'meter-val none'; val.textContent = onChange ? (opt.prompt || 'Rate') : 'Not rated'; }
+    else { val.className = 'meter-val none'; val.textContent = live ? (opt.prompt || 'Rate') : 'Not rated'; }
+    if (word) word.textContent = v ? SCORE_WORDS[v] : '';
   };
   paint(cur);
-  if (!onChange) { el.setAttribute('role', 'img'); el.setAttribute('aria-label', cur ? `Rated ${cur} out of 10` : 'Not rated'); return el; }
+  if (!live) { el.setAttribute('role', 'img'); el.setAttribute('aria-label', cur ? `Rated ${cur} out of 10` : 'Not rated'); return el; }
 
   bars.tabIndex = 0;
   bars.setAttribute('role', 'slider');
   bars.setAttribute('aria-label', opt.label || 'Your score');
   bars.setAttribute('aria-valuemin', '0');
   bars.setAttribute('aria-valuemax', '10');
-  const sync = () => { bars.setAttribute('aria-valuenow', cur); bars.setAttribute('aria-valuetext', cur ? `${cur} out of 10` : 'Not rated'); };
+  const sync = () => {
+    bars.setAttribute('aria-valuenow', cur);
+    bars.setAttribute('aria-valuetext', cur ? `${cur} out of 10, ${SCORE_WORDS[cur]}` : 'Not rated');
+    el.classList.toggle('scored', !!cur);
+  };
   sync();
-  const at = e => { const r = bars.getBoundingClientRect(); return Math.min(10, Math.max(1, Math.ceil((e.clientX - r.left) / r.width * 10))); };
+  /* The bar nearest the pointer, so the score always matches the bar you're on. */
+  const at = e => {
+    let best = 1, dist = Infinity;
+    cells.forEach((c, i) => { const r = c.getBoundingClientRect(), d = Math.abs(e.clientX - (r.left + r.width / 2)); if (d < dist) { dist = d; best = i + 1; } });
+    return best;
+  };
+  const showTip = v => {
+    if (!v) { tip.classList.remove('on'); return; }
+    const c = cells[v - 1];
+    tip.textContent = `${v} · ${SCORE_WORDS[v]}`;
+    tip.style.left = (c.offsetLeft + c.offsetWidth / 2) + 'px';
+    tip.classList.add('on');
+  };
   const set = v => {
     cur = Math.min(10, Math.max(0, v)); paint(cur); sync();
     el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
     onChange(cur);
   };
-  /* Tap a bar to score, tap it again to clear, or drag sideways across the bars. */
+  /* Tap a bar to score, tap it again to clear, or slide across the bars. A bubble above
+     your finger shows the score, since your thumb hides the bars. */
   let drag = null;
+  const endDrag = () => { if (drag) clearTimeout(drag.t); drag = null; showTip(0); };
   bars.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
-    drag = { start: at(e), moved: false };
+    const v = at(e);
+    drag = { start: v, last: v, moved: false };
     try { bars.setPointerCapture(e.pointerId); } catch (x) {}
-    paint(drag.start, true);
+    paint(v, true);
+    // On touch, wait a moment so a page scroll that starts on the bars doesn't flash the bubble.
+    if (e.pointerType === 'touch') drag.t = setTimeout(() => drag && showTip(drag.last), 90); else showTip(v);
   });
   bars.addEventListener('pointermove', e => {
-    if (drag) { const v = at(e); if (v !== drag.start) drag.moved = true; paint(v, true); }
-    else if (e.pointerType === 'mouse') paint(at(e), true);
+    if (drag) {
+      const v = at(e);
+      if (v === drag.last) return;
+      drag.last = v; drag.moved = true; paint(v, true); showTip(v);
+      if (e.pointerType === 'touch' && navigator.vibrate) { try { navigator.vibrate(4); } catch (x) {} }
+    } else if (e.pointerType === 'mouse') paint(at(e), true);
   });
   bars.addEventListener('pointerup', e => {
     if (!drag) return;
-    const v = at(e), d = drag; drag = null;
+    const v = at(e), d = drag; endDrag();
     set(!d.moved && v === cur ? 0 : v);
   });
-  bars.addEventListener('pointercancel', () => { drag = null; paint(cur); });
+  bars.addEventListener('pointercancel', () => { endDrag(); paint(cur); });
   bars.addEventListener('pointerleave', () => { if (!drag) paint(cur); });
+  clr.addEventListener('click', () => {
+    const prev = cur;
+    set(0);
+    bars.focus({ preventScroll: true });
+    toast('Score cleared', 4500, { label: 'Undo', run: () => set(prev) });
+  });
   bars.addEventListener('keydown', e => {
     const k = e.key;
     if (k === 'ArrowRight' || k === 'ArrowUp') set(cur + 1);
