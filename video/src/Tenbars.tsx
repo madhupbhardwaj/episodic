@@ -55,9 +55,9 @@ const buildCues = (): Cue[] => {
   // 4. Rating 1 -> 10: same notes as the hook, ending on the impact
   const r = SCENES.rate.from;
   add(r + 14, "drop-in", 0.5);
-  for (let i = 0; i < 9; i++) add(r + RATE.fillStart + i * RATE.fillStep, `bar-${i + 1}`, 0.5);
-  add(r + RATE_IMPACT, "bar-10", 0.55);
-  add(r + RATE_IMPACT, "impact", 0.95);
+  for (let i = 0; i < 9; i++) add(r + RATE.fillStart + i * RATE.fillStep, `bar-${i + 1}`, 0.4);
+  add(r + RATE_IMPACT, "bar-10", 0.45);
+  add(r + RATE_IMPACT, "impact", 0.55);
   add(r + RATE.exit - 2, "whoosh", 0.35);
 
   // 5. Level up
@@ -85,6 +85,9 @@ const buildCues = (): Cue[] => {
 
 const CUES = buildCues();
 
+// Master gain: keeps the mix around -14.5 LUFS with headroom on the 10/10 impact.
+const MASTER = 0.68;
+
 export const Tenbars: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#090B16" }}>
@@ -110,9 +113,9 @@ export const Tenbars: React.FC = () => {
         <EndCard />
       </Sequence>
 
-      <Audio name="Music" src={staticFile("audio/music.wav")} volume={0.62} />
+      <Audio name="Music" src={staticFile("audio/music.wav")} volume={0.62 * MASTER} />
       {CUES.map((cue, i) => (
-        <Audio key={i} name={cue.src.split("/").pop()} from={cue.at} src={cue.src} volume={cue.volume} />
+        <Audio key={i} name={cue.src.split("/").pop()} from={cue.at} src={cue.src} volume={cue.volume * MASTER} />
       ))}
     </AbsoluteFill>
   );

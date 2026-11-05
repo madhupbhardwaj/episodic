@@ -270,7 +270,9 @@ def sfx_impact():
         g = bell(midi(nn), 0.6, 0.15, 0.5, 1.0) * (0.22 * (1 - k / 20))
         i = int(at * SR)
         sparkle[i:i + len(g)] += g[: len(sparkle) - i]
+    crack *= 0.5
     mono = sub * 1.1 + punch + crack + chord + sparkle
+    mono *= np.clip(t / 0.004, 0, 1)  # 4ms attack: avoids codec overshoot on the transient
     st = wet(mono, IR_ROOM, 0.38)
     return st
 
