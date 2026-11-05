@@ -390,7 +390,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 <footer>
   <div class="wrap">
-    <p>Series details, posters and episode images come from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0). <span id="storage-note">Your ratings are stored in this browser. Use Export on Your ratings to keep a copy or move them to another device.</span></p>
+    <p>Series details, posters and episode images come from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0). <span id="storage-note">Your ratings are stored in this browser.</span></p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -608,7 +608,7 @@ function renderAccount() {
   const initial = esc((user.name || user.email || '?').trim()[0].toUpperCase());
   el.innerHTML = `<div class="acct">
     <button type="button" class="avatar" id="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Account: ${esc(user.name || user.email)}">${user.photo ? `<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">` : initial}</button>
-    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span>${myProfile ? `<a class="menu-link" href="#/u/${esc(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-link" href="#/mine">Pick a username so friends can find you</a>` : ''}<button type="button" class="btn" id="signout">Sign out</button></div></div>`;
+    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span>${myProfile ? `<a class="menu-link" href="${profileHref(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-link" href="#/mine">Pick a username so friends can find you</a>` : ''}<button type="button" class="btn" id="signout">Sign out</button></div></div>`;
   note.textContent = `Your ratings are saved to your Google account (${user.email}), so they show up wherever you sign in.`;
   $('#avatar').onclick = e => { e.stopPropagation(); setMenu($('#acct-menu').hidden); };
   $('#signout').onclick = () => { setMenu(false); signOut(); };
@@ -758,9 +758,42 @@ function shelfCard(r) {
 /* ---------- Router ---------- */
 let renderId = 0;
 let current = null;
+/* Profile pages live at /@username (and /@username/show/ID); everything else uses #/ routes.
+   On Vercel, vercel.json sends /@… addresses to this same index.html. */
+const onHttp = location.protocol.startsWith('http');
+const atProfilePath = () => onHttp && location.pathname.startsWith('/@');
+const profilePath = (name, rest = '') => `/@${name}${rest}`;
+const profileUrl = (name, rest = '') => location.origin + profilePath(name, rest);
+const atRoot = () => !onHttp || location.pathname === '/';
+/* Navigate to a #/ route or a /@ path, keeping the address bar clean. */
+function go(href) {
+  if (href.startsWith('/@')) {
+    if (!onHttp) { location.hash = '#/u/' + href.slice(2); return; }
+    history.pushState(null, '', href); route(); return;
+  }
+  if (!atRoot()) { history.pushState(null, '', '/' + href); route(); return; }
+  location.hash = href;
+}
+document.addEventListener('click', e => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a[href]');
+  if (!a || a.target) return;
+  const href = a.getAttribute('href');
+  if (href.startsWith('/@') || (href.startsWith('#') && !atRoot())) { e.preventDefault(); go(href); }
+});
+let lastRoute = null;
 function route() {
-  closeSug();
-  const parts = (location.hash.slice(1) || '/').split('/').filter(Boolean);
+  const key = location.pathname + location.hash;
+  if (key === lastRoute) return;
+  lastRoute = key;
+  closeSug(); setMenu(false);
+  let parts;
+  if (atProfilePath()) parts = ['u', ...decodeURIComponent(location.pathname.slice(2)).split('/').filter(Boolean)];
+  else {
+    parts = (location.hash.slice(1) || '/').split('/').filter(Boolean);
+    // Old #/u/name links move to the /@name address.
+    if (parts[0] === 'u' && parts[1] && onHttp) { history.replaceState(null, '', '/@' + parts.slice(1).join('/')); lastRoute = location.pathname + location.hash; }
+  }
   if (parts[0] === 'show' && parts[1]) {
     const sid = +parts[1], season = parts[2] === 'season' ? +parts[3] : null;
     if (current && current.show.id === sid && app.dataset.view === 'show') { selectSeason(season || defaultSeason()); return; }
@@ -777,6 +810,7 @@ function route() {
   else { window.scrollTo(0, 0); renderHome(); }
 }
 window.addEventListener('hashchange', route);
+window.addEventListener('popstate', route);
 
 /* ---------- Home ---------- */
 let popular = [];
@@ -796,7 +830,7 @@ async function renderHome() {
     ${mine.length ? `<section class="sec"><div class="sec-head"><h2>Pick up where you left off</h2><a class="link" href="#/mine">See all your ratings</a></div><div class="shelf">${mine.slice(0, 14).map(shelfCard).join('')}</div></section>` : ''}
     <section class="sec"><div class="sec-head"><h2>Popular series</h2><div class="filters" id="filters" role="group" aria-label="Filter by genre"></div></div><div class="grid" id="pop">${skeletons(14)}</div></section>
   </div>`;
-  $('#intro-form').onsubmit = e => { e.preventDefault(); const q = $('#intro-q').value.trim(); if (q) location.hash = '#/search/' + encodeURIComponent(q); };
+  $('#intro-form').onsubmit = e => { e.preventDefault(); const q = $('#intro-q').value.trim(); if (q) go('#/search/' + encodeURIComponent(q)); };
   try {
     if (!popular.length) {
       const pages = await Promise.all([0, 1, 2].map(p => api('/shows?page=' + p).catch(() => [])));
@@ -855,7 +889,7 @@ qIn.addEventListener('input', () => {
       if (qIn.value.trim() !== q) return;
       if (!r.length && !people.length) { closeSug(); return; }
       sug.innerHTML = r.slice(0, people.length ? 5 : 6).map(({ show: s }) => `<a href="#/show/${s.id}">${s.image ? `<img src="${esc(s.image.medium)}" alt="">` : `<div class="ph"></div>`}<div><b>${esc(s.name)}</b><small>${esc([yearsOf(s), netOf(s)].filter(Boolean).join(', '))}</small></div></a>`).join('')
-        + (people.length ? `<div class="group">People</div>` + people.map(pp => `<a class="person" href="#/u/${esc(pp.username)}">${avatarHTML(pp, 'sm')}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}</small></div></a>`).join('') : '')
+        + (people.length ? `<div class="group">People</div>` + people.map(pp => `<a class="person" href="${profileHref(pp.username)}">${avatarHTML(pp, 'sm')}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}</small></div></a>`).join('') : '')
         + `<a class="all" href="#/search/${encodeURIComponent(q)}">Show all series results for “${esc(q)}”</a>`;
       sug.classList.add('open'); sugIdx = -1;
     } catch (e) {}
@@ -873,8 +907,8 @@ qIn.addEventListener('keydown', e => {
 $('#search-form').addEventListener('submit', e => {
   e.preventDefault();
   const links = $$('a', sug);
-  if (sugIdx >= 0 && links[sugIdx]) location.hash = links[sugIdx].getAttribute('href');
-  else { const q = qIn.value.trim(); if (q) location.hash = '#/search/' + encodeURIComponent(q); }
+  if (sugIdx >= 0 && links[sugIdx]) go(links[sugIdx].getAttribute('href'));
+  else { const q = qIn.value.trim(); if (q) go('#/search/' + encodeURIComponent(q)); }
   closeSug(); qIn.blur();
 });
 document.addEventListener('click', e => { if (!e.target.closest('.search')) closeSug(); });
@@ -957,22 +991,22 @@ function drawShow(seasonNum) {
   }, { size: 'lg', label: `Your score for ${s.name}`, prompt: 'Tap a bar to score' }));
   const shareBtn = $('#share-mine');
   if (shareBtn) shareBtn.onclick = () => {
-    if (myProfile && myProfile.public) share(linkTo(`/u/${myProfile.username}/show/${s.id}`), `${myProfile.name || myProfile.username}'s scores for ${s.name}`);
+    if (myProfile && myProfile.public) share(profileUrl(myProfile.username, `/show/${s.id}`), `${myProfile.name || myProfile.username}'s scores for ${s.name}`);
     else if (myProfile) toast('Your profile is private. Turn on sharing on Your ratings first.');
-    else { toast('Pick a username first, then you can share.'); location.hash = '#/mine'; }
+    else { toast('Pick a username first, then you can share.'); go('#/mine'); }
   };
   const nav = $('#season-nav');
   if (nav) nav.onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     const n = +b.dataset.season;
-    history.replaceState(null, '', `#/show/${s.id}/season/${n}`);
+    history.replaceState(null, '', `#/show/${s.id}/season/${n}`); lastRoute = location.pathname + location.hash;
     selectSeason(n);
   };
   const gm = $('#gridmap');
   if (gm) gm.onclick = e => {
     const c = e.target.closest('.gm-cell'); if (!c || c.classList.contains('later')) return;
     const n = +c.dataset.season;
-    history.replaceState(null, '', `#/show/${s.id}/season/${n}`);
+    history.replaceState(null, '', `#/show/${s.id}/season/${n}`); lastRoute = location.pathname + location.hash;
     selectSeason(n);
     const row = $('#ep-' + c.dataset.ep);
     if (row) {
@@ -1118,9 +1152,7 @@ function renderMine() {
   <section class="wrap page">
     <div class="page-head"><h1>Your ratings</h1>
       <div class="tools">
-        ${list.length ? `<label class="sr" for="sort">Sort by</label><select class="btn" id="sort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="most">Most episodes scored</option><option value="name">Name</option></select>
-        <button class="btn" id="export" type="button">Export</button>` : ''}
-        <label class="btn" style="cursor:pointer">Import<input type="file" id="import" accept="application/json,.json" hidden></label>
+        ${list.length ? `<label class="sr" for="sort">Sort by</label><select class="btn" id="sort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="most">Most episodes scored</option><option value="name">Name</option></select>` : ''}
       </div></div>
     <p class="recap">${recap}</p>
     ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p><section class="profile-card" id="profile-card" aria-label="Your profile"></section>`
@@ -1155,34 +1187,6 @@ function renderMine() {
     const id = b.closest('li').dataset.id;
     if (confirm(`Remove all your scores for ${store.shows[id].name}?`)) { delete store.shows[id]; save([id]); renderMine(); toast('Scores removed'); }
   };
-  if ($('#export')) $('#export').onclick = () => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(store, null, 2)], { type: 'application/json' }));
-    a.download = `tenbars-ratings-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    toast('Ratings exported');
-  };
-  $('#import').onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const fr = new FileReader();
-    fr.onload = () => {
-      try {
-        let d = JSON.parse(fr.result);
-        if (!d || typeof d.shows !== 'object') throw 0;
-        if ((d.version || 1) < 2) d = fromV1(d);
-        const changed = [];
-        for (const [k, v] of Object.entries(d.shows)) {
-          if (!v || typeof v.episodes !== 'object') continue;
-          const cur = store.shows[k];
-          if (!cur || (v.updated || 0) > (cur.updated || 0)) { store.shows[k] = { ...v, id: +k }; changed.push(k); }
-        }
-        const n = changed.length;
-        save(changed); renderMine(); toast(`Imported ${plural(n, 'series').replace('serieses', 'series')}`);
-      } catch (err) { toast('That file isn’t a Tenbars export. Choose the .json file you exported.'); }
-    };
-    fr.readAsText(f);
-  };
   draw();
 }
 
@@ -1194,7 +1198,7 @@ function renderMine() {
 */
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 const cleanName = q => String(q || '').trim().toLowerCase().replace(/^@/, '').replace(/[^a-z0-9_]/g, '');
-const linkTo = path => location.href.split('#')[0] + '#' + path;
+const profileHref = (name, rest = '') => esc(onHttp ? profilePath(name, rest) : `#/u/${name}${rest}`);
 const firstName = pr => (pr.name || pr.username || '').split(/\s+/)[0];
 function avatarHTML(pr, size = '') {
   const letter = esc(((pr.name || pr.username || '?').trim()[0] || '?').toUpperCase());
@@ -1294,11 +1298,11 @@ function renderProfileCard() {
   const box = $('#profile-card'); if (!box) return;
   if (myProfile === undefined) { box.innerHTML = `<p class="dim" style="margin:0">Loading your profile…</p>`; return; }
   if (!myProfile) { profileForm(box, null); return; }
-  const url = linkTo(`/u/${myProfile.username}`);
+  const url = profileUrl(myProfile.username);
   box.innerHTML = `
     <div class="who">${avatarHTML(myProfile)}<div><b>${esc(myProfile.name || myProfile.username)}</b><small>@${esc(myProfile.username)}, ${myProfile.public ? 'anyone with the link can see your ratings' : 'private, only you can see your ratings'}</small></div>
       <button type="button" class="btn quiet" id="edit-profile">Edit</button></div>
-    ${myProfile.public ? `<div class="linkrow"><label class="sr" for="my-link">Your profile link</label><input id="my-link" value="${esc(url)}" readonly><button type="button" class="btn" id="copy-my">Copy link</button><a class="btn" href="#/u/${esc(myProfile.username)}">View profile</a></div>` : ''}`;
+    ${myProfile.public ? `<div class="linkrow"><label class="sr" for="my-link">Your profile link</label><input id="my-link" value="${esc(url)}" readonly><button type="button" class="btn" id="copy-my">Copy link</button><a class="btn" href="${profileHref(myProfile.username)}">View profile</a></div>` : ''}`;
   $('#edit-profile').onclick = () => profileForm(box, myProfile);
   const c = $('#copy-my'); if (c) c.onclick = () => copyLink(url);
   const inp = $('#my-link'); if (inp) inp.onfocus = () => inp.select();
@@ -1368,7 +1372,7 @@ function renderMeHint() {
   const box = $('#me-hint'); if (!box) return;
   box.innerHTML = !user ? `Sign in to get your own profile. <button type="button" class="btn google" data-signin style="margin-left:6px">${GOOGLE_G}Sign in with Google</button>`
     : myProfile === null ? `You don’t have a username yet. <a href="#/mine">Pick one on Your ratings</a> so friends can find you.`
-    : myProfile ? `Your profile is <a href="#/u/${esc(myProfile.username)}">@${esc(myProfile.username)}</a>${myProfile.public ? '' : ' (private)'}.` : '';
+    : myProfile ? `Your profile is <a href="${profileHref(myProfile.username)}">@${esc(myProfile.username)}</a>${myProfile.public ? '' : ' (private)'}.` : '';
 }
 
 /* People page */
@@ -1394,14 +1398,14 @@ async function renderPeople(q) {
   let t, seq = 0;
   const run = async () => {
     const term = cleanName(input.value);
-    history.replaceState(null, '', term ? `#/people/${encodeURIComponent(term)}` : '#/people');
+    history.replaceState(null, '', term ? `#/people/${encodeURIComponent(term)}` : '#/people'); lastRoute = location.pathname + location.hash;
     const my = ++seq;
     if (!term) { out.innerHTML = ''; return; }
     out.innerHTML = `<li class="hint" style="padding:14px 4px">Searching…</li>`;
     try {
       const res = await searchPeople(term, 12);
       if (my !== seq || id !== renderId) return;
-      out.innerHTML = res.length ? res.map(pp => `<li><a href="#/u/${esc(pp.username)}">${avatarHTML(pp)}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}${user && pp.uid === user.uid ? ' (you)' : ''}. ${esc(statsLine(pp.stats))}</small></div></a></li>`).join('')
+      out.innerHTML = res.length ? res.map(pp => `<li><a href="${profileHref(pp.username)}">${avatarHTML(pp)}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}${user && pp.uid === user.uid ? ' (you)' : ''}. ${esc(statsLine(pp.stats))}</small></div></a></li>`).join('')
         : `<li class="hint" style="padding:14px 4px">No one’s username starts with “${esc(term)}”. Check the spelling, or ask your friend for their profile link.</li>`;
     } catch (e) {
       if (my !== seq) return;
@@ -1460,7 +1464,7 @@ async function renderProfile(name) {
     <p class="recap" style="margin-top:20px">${recap}${prof.own && !prof.public ? ' Your profile is private, so only you can see this page.' : ''}</p>
     <ul class="mine" id="their-list"></ul>
   </section>`;
-  $('#share-prof').onclick = () => share(linkTo(`/u/${prof.username}`), `${prof.name || prof.username} on Tenbars`);
+  $('#share-prof').onclick = () => share(profileUrl(prof.username), `${prof.name || prof.username} on Tenbars`);
   const epAvg = r => avgOf(Object.values(r.episodes || {}).map(e => e.r));
   const draw = () => {
     const sort = $('#psort') ? $('#psort').value : 'recent';
@@ -1469,7 +1473,7 @@ async function renderProfile(name) {
     const box = $('#their-list');
     box.innerHTML = sorted.map(r => {
       const n = Object.keys(r.episodes || {}).length, mine = !prof.own && store.shows[r.id];
-      const href = `#/u/${esc(prof.username)}/show/${r.id}`;
+      const href = profileHref(prof.username, `/show/${r.id}`);
       return `<li data-id="${r.id}">
         <a href="${href}" class="poster" tabindex="-1">${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy">` : `<div class="ph">${initials(r.name)}</div>`}</a>
         <div><h3><a href="${href}">${esc(r.name)}</a></h3>
@@ -1521,7 +1525,7 @@ async function renderTheirShow(name, showId, seasonNum) {
   const rated = eps.filter(e => their[e.id]);
   const both = eps.filter(e => their[e.id] && mine[e.id]);
   const theirAvg = rated.length ? one(avgOf(rated.map(e => their[e.id].r))) : '';
-  const shareUrl = linkTo(`/u/${prof.username}/show/${showId}`);
+  const shareUrl = profileUrl(prof.username, `/show/${showId}`);
   let compare = '';
   if (mineRec) {
     const diff = both.length ? avgOf(both.map(e => their[e.id].r - mine[e.id].r)) : 0;
@@ -1530,7 +1534,7 @@ async function renderTheirShow(name, showId, seasonNum) {
   }
   app.innerHTML = `
   <div class="wrap page">
-    <a class="back" href="#/u/${esc(prof.username)}">All of ${esc(first)}’s ratings</a>
+    <a class="back" href="${profileHref(prof.username)}">All of ${esc(first)}’s ratings</a>
     <section class="show-head">
       <div class="show-poster">${d.image ? `<img src="${esc(d.image.original || d.image.medium)}" alt="${esc(d.name)} poster">` : `<div class="ph">${initials(d.name)}</div>`}</div>
       <div class="show-title"><h1>${esc(d.name)}</h1>
@@ -1569,7 +1573,7 @@ async function renderTheirShow(name, showId, seasonNum) {
       if (mineRec) slot.insertAdjacentHTML('beforeend', `<span class="you">${mine[e.id] ? `You: <b>${mine[e.id].r}</b>` : 'You: not scored'}</span>`);
     });
   };
-  $('#season-nav').onclick = e => { const b = e.target.closest('button'); if (!b) return; history.replaceState(null, '', `#/u/${prof.username}/show/${showId}/season/${b.dataset.season}`); pick(+b.dataset.season); };
+  $('#season-nav').onclick = e => { const b = e.target.closest('button'); if (!b) return; history.replaceState(null, '', onHttp ? profilePath(prof.username, `/show/${showId}/season/${b.dataset.season}`) : `#/u/${prof.username}/show/${showId}/season/${b.dataset.season}`); lastRoute = location.pathname + location.hash; pick(+b.dataset.season); };
   $('#gridmap').onclick = e => {
     const c = e.target.closest('.gm-cell'); if (!c || c.classList.contains('later')) return;
     pick(+c.dataset.season);
