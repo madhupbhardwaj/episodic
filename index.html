@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Episodic</title>
+<title>Tenbars</title>
 <meta name="description" content="Search any TV series, open a season and score every episode out of 10.">
+<link rel="canonical" href="https://tenbars.vercel.app/">
+<meta property="og:site_name" content="Tenbars">
+<meta property="og:title" content="Tenbars">
+<meta property="og:description" content="Search any TV series, open a season and score every episode out of 10.">
+<meta property="og:url" content="https://tenbars.vercel.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="application-name" content="Tenbars">
+<meta name="apple-mobile-web-app-title" content="Tenbars">
 <meta name="theme-color" content="#ECEDEF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232638E8'/%3E%3Crect x='7' y='18' width='4' height='7' rx='1' fill='white'/%3E%3Crect x='14' y='13' width='4' height='12' rx='1' fill='white'/%3E%3Crect x='21' y='7' width='4' height='18' rx='1' fill='white'/%3E%3C/svg%3E">
@@ -42,7 +51,7 @@ h1,h2,h3{margin:0;font-weight:400}
 .top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top-inner{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;min-height:68px}
 .brand{display:inline-flex;align-items:flex-end;gap:8px;font-family:var(--display);font-size:30px;line-height:1;letter-spacing:-.01em}
-.brand svg{width:20px;height:18px;margin-bottom:5px;flex:none}
+.brand svg{width:33px;height:18px;margin-bottom:5px;flex:none}
 .brand svg rect{fill:var(--signal)}
 .nav{display:flex;gap:22px;font-size:15px;font-weight:500}
 .nav a{color:var(--ink-2);padding:6px 0;border-bottom:2px solid transparent}
@@ -267,6 +276,24 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
   .nav a[data-nav="home"]{display:none}
   .meter{gap:8px}
 }
+/* ---------- Account ---------- */
+.nav{align-items:center}
+.nav a{white-space:nowrap}
+.account{display:flex;align-items:center;min-height:36px}
+.account:empty{display:none}
+.btn.signin{height:36px;padding:0 12px;gap:8px;font-size:14px}
+.btn.signin svg,.btn.google svg{width:16px;height:16px;flex:none}
+.acct{position:relative}
+.avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);padding:0;overflow:hidden;background:var(--sunk);font-weight:600;font-size:15px;display:grid;place-items:center}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.acct-menu{position:absolute;right:0;top:calc(100% + 8px);width:240px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.18);padding:14px;z-index:10}
+.acct-menu b{display:block;font-size:15px;font-weight:600}
+.acct-menu span{display:block;font-size:13px;color:var(--ink-2);overflow-wrap:anywhere}
+.acct-menu .btn{width:100%;margin-top:14px}
+.sync-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:-18px 0 32px;font-size:15px;color:var(--ink-2)}
+.sync-note .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1FA463;margin-right:8px;vertical-align:1px}
+@media (max-width:480px){.nav a[data-nav="home"]{display:none}}
+@media (max-width:420px){.nav{gap:12px}.btn.signin{width:36px;padding:0}.btn.signin span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
@@ -275,7 +302,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 <body>
 <header class="top">
   <div class="wrap top-inner">
-    <a href="#/" class="brand" aria-label="Episodic home">Episodic<svg viewBox="0 0 20 18" aria-hidden="true"><rect x="0" y="11" width="5" height="7" rx="1"/><rect x="7.5" y="6" width="5" height="12" rx="1"/><rect x="15" y="0" width="5" height="18" rx="1"/></svg></a>
+    <a href="#/" class="brand" aria-label="Tenbars home">Tenbars<svg viewBox="0 0 32.8 18" aria-hidden="true"><rect x="0" y="14.0" width="2.2" height="4.0" rx=".6"/><rect x="3.4" y="12.4" width="2.2" height="5.6" rx=".6"/><rect x="6.8" y="10.9" width="2.2" height="7.1" rx=".6"/><rect x="10.2" y="9.3" width="2.2" height="8.7" rx=".6"/><rect x="13.6" y="7.8" width="2.2" height="10.2" rx=".6"/><rect x="17" y="6.2" width="2.2" height="11.8" rx=".6"/><rect x="20.4" y="4.7" width="2.2" height="13.3" rx=".6"/><rect x="23.8" y="3.1" width="2.2" height="14.9" rx=".6"/><rect x="27.2" y="1.6" width="2.2" height="16.4" rx=".6"/><rect x="30.6" y="0.0" width="2.2" height="18.0" rx=".6"/></svg></a>
     <form class="search" id="search-form" role="search" autocomplete="off">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <label class="sr" for="q">Search series</label>
@@ -285,6 +312,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Browse</a>
       <a href="#/mine" data-nav="mine">Your ratings</a>
+      <div class="account" id="account"></div>
     </nav>
   </div>
 </header>
@@ -293,14 +321,31 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 <footer>
   <div class="wrap">
-    <p>Series details, posters and episode images come from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0). Your ratings are stored in this browser. Use Export on Your ratings to keep a copy or move them to another device.</p>
+    <p>Series details, posters and episode images come from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0). <span id="storage-note">Your ratings are stored in this browser. Use Export on Your ratings to keep a copy or move them to another device.</span></p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
+/* =====================================================================
+   FIREBASE SETUP: paste your web app config here (Firebase console >
+   Project settings > Your apps > SDK setup and configuration > Config).
+   Leave apiKey empty and the site runs without accounts, saving
+   ratings in the browser only.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyB1UT7miBqm9WrjR2VlrJ4eMisEN8mscZU',
+  authDomain: 'episodic-917d6.firebaseapp.com',
+  projectId: 'episodic-917d6',
+  storageBucket: 'episodic-917d6.firebasestorage.app',
+  messagingSenderId: '83988660056',
+  appId: '1:83988660056:web:5ad429defd86a66fab6f2d'
+};
+const FIREBASE_VERSION = '10.14.1';
+
 const API = 'https://api.tvmaze.com';
+// Storage keys keep the app's original name so ratings saved before the rename aren't lost.
 const KEY = 'episodic.ratings.v2';
 const OLD_KEY = 'episodic.ratings.v1';
 
@@ -324,8 +369,189 @@ function load() {
   try { const d = JSON.parse(localStorage.getItem(OLD_KEY)); if (d && d.shows) return fromV1(d); } catch (e) {}
   return { version: 2, shows: {} };
 }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { toast('Ratings could not be saved. This browser is blocking storage.'); } }
+function guestData() {
+  try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && d.shows && Object.keys(d.shows).length) return d; } catch (e) {}
+  try { const d = JSON.parse(localStorage.getItem(OLD_KEY)); if (d && d.shows && Object.keys(d.shows).length) return fromV1(d); } catch (e) {}
+  return null;
+}
+/* ids: the shows that changed, so only those are sent to the account */
+function save(ids) {
+  try { localStorage.setItem(localKey(), JSON.stringify(store)); }
+  catch (e) { if (!user) toast('Ratings could not be saved. This browser is blocking storage.'); }
+  if (user && ids) queuePush(ids);
+}
 let store = load();
+
+/* ---------- Accounts: Google sign-in + Firestore (optional) ---------- */
+const accountsOn = !!FIREBASE_CONFIG.apiKey;
+let fb = null;      // { auth, db, au, fs } once Firebase has loaded
+let user = null;    // { uid, name, email, photo } while signed in
+let unsub = null;   // live-sync listener
+let authReady = false;
+const pending = new Set();
+let pushT;
+function localKey() { return user ? `${KEY}.${user.uid}` : KEY; }
+
+function queuePush(ids) {
+  [].concat(ids).forEach(id => pending.add(String(id)));
+  clearTimeout(pushT); pushT = setTimeout(push, 600);
+}
+async function push() {
+  if (!user || !fb || !pending.size) return;
+  const uid = user.uid, ids = [...pending];
+  pending.clear();
+  const { doc, setDoc, deleteDoc } = fb.fs;
+  try {
+    await Promise.all(ids.map(id => {
+      const ref = doc(fb.db, 'users', uid, 'shows', id);
+      return store.shows[id] ? setDoc(ref, store.shows[id]) : deleteDoc(ref);
+    }));
+  } catch (e) {
+    console.error(e);
+    if (user && user.uid === uid) { ids.forEach(i => pending.add(i)); clearTimeout(pushT); pushT = setTimeout(push, 5000); }
+    toast(e.code === 'permission-denied' ? 'Your account’s database rules blocked the save. Check the Firestore rules.' : 'Couldn’t save to your account yet. Trying again shortly.');
+  }
+}
+
+async function initAccounts() {
+  if (!accountsOn) { renderAccount(); return; }
+  const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/`;
+  try {
+    const [a, au, fs] = await Promise.all(['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => import(base + f)));
+    const fbApp = a.initializeApp(FIREBASE_CONFIG);
+    fb = { auth: au.getAuth(fbApp), db: fs.initializeFirestore(fbApp, { ignoreUndefinedProperties: true }), au, fs };
+    au.getRedirectResult(fb.auth).catch(authError);
+    au.onAuthStateChanged(fb.auth, onUser);
+  } catch (e) {
+    console.error('Firebase failed to load', e);
+    fb = null; authReady = true; renderAccount();
+  }
+}
+
+function onUser(u) {
+  authReady = true;
+  if (unsub) { unsub(); unsub = null; }
+  user = u ? { uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '' } : null;
+  renderAccount();
+  if (!user) { store = load(); rerender(); return; }
+
+  // Show what this device already has for the account, then sync with the cloud.
+  try { const d = JSON.parse(localStorage.getItem(localKey())); store = d && d.shows ? d : { version: 2, shows: {} }; }
+  catch (e) { store = { version: 2, shows: {} }; }
+  rerender();
+
+  const { collection, onSnapshot } = fb.fs;
+  let first = true;
+  unsub = onSnapshot(collection(fb.db, 'users', user.uid, 'shows'), snap => {
+    const toPush = [];
+    let changed = false;
+    if (first) {
+      first = false;
+      const cloud = {};
+      snap.forEach(d => { cloud[d.id] = { ...d.data(), id: +d.id }; });
+      for (const [id, r] of Object.entries(cloud)) {
+        const l = store.shows[id];
+        if (!l || (r.updated || 0) >= (l.updated || 0)) store.shows[id] = r;
+      }
+      for (const [id, l] of Object.entries(store.shows)) {
+        const c = cloud[id];
+        if (!c || (l.updated || 0) > (c.updated || 0)) toPush.push(id);
+      }
+      // Ratings made in this browser before signing in move into the account.
+      const guest = guestData();
+      if (guest) {
+        let moved = 0;
+        for (const [id, g] of Object.entries(guest.shows)) {
+          const l = store.shows[id];
+          if (!l || (g.updated || 0) > (l.updated || 0)) { store.shows[id] = g; toPush.push(id); moved++; }
+        }
+        try { localStorage.removeItem(KEY); localStorage.removeItem(OLD_KEY); } catch (e) {}
+        if (moved) toast(`Added ${plural(moved, 'series').replace('serieses', 'series')} from this browser to your account`);
+      }
+      changed = true;
+    } else {
+      snap.docChanges().forEach(ch => {
+        const id = ch.doc.id;
+        if (ch.doc.metadata.hasPendingWrites || pending.has(id)) return;
+        if (ch.type === 'removed') { if (store.shows[id]) { delete store.shows[id]; changed = true; } return; }
+        const r = { ...ch.doc.data(), id: +id }, l = store.shows[id];
+        if (!l || (r.updated || 0) > (l.updated || 0)) { store.shows[id] = r; changed = true; }
+      });
+    }
+    if (changed) { save(toPush); rerender(); }
+  }, err => {
+    console.error(err);
+    toast(err.code === 'permission-denied' ? 'Your account’s database rules are blocking access. Check the Firestore rules.' : 'Couldn’t reach your account. Your scores are kept on this device for now.');
+  });
+}
+
+async function signIn() {
+  if (!fb) { toast('Sign-in is still loading. Try again in a moment.'); return; }
+  const { au } = fb;
+  const provider = new au.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try { await au.signInWithPopup(fb.auth, provider); }
+  catch (e) {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') return au.signInWithRedirect(fb.auth, provider);
+    authError(e);
+  }
+}
+function authError(e) {
+  if (!e || e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
+  console.error(e);
+  toast(e.code === 'auth/unauthorized-domain' ? 'Sign-in isn’t allowed on this web address yet. Add it under Authorized domains in Firebase.'
+    : e.code === 'auth/network-request-failed' ? 'Sign-in needs an internet connection.'
+    : 'Sign-in didn’t work. Try again.');
+}
+async function signOut() {
+  if (!fb || !user) return;
+  clearTimeout(pushT); await push();
+  const key = localKey();
+  await fb.au.signOut(fb.auth);
+  try { localStorage.removeItem(key); } catch (e) {}
+  toast('Signed out');
+}
+
+const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+
+function renderAccount() {
+  const el = $('#account'), note = $('#storage-note');
+  if (!accountsOn || (authReady && !fb)) { el.innerHTML = ''; return; }
+  if (!authReady) { el.innerHTML = ''; return; }
+  if (!user) {
+    el.innerHTML = `<button type="button" class="btn signin" data-signin title="Sign in with Google">${GOOGLE_G}<span>Sign in</span></button>`;
+    note.textContent = 'Your ratings are stored in this browser until you sign in with Google. Signing in saves them to your account so they show up on any device.';
+    return;
+  }
+  const initial = esc((user.name || user.email || '?').trim()[0].toUpperCase());
+  el.innerHTML = `<div class="acct">
+    <button type="button" class="avatar" id="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Account: ${esc(user.name || user.email)}">${user.photo ? `<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">` : initial}</button>
+    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span><button type="button" class="btn" id="signout">Sign out</button></div></div>`;
+  note.textContent = `Your ratings are saved to your Google account (${user.email}), so they show up wherever you sign in.`;
+  $('#avatar').onclick = e => { e.stopPropagation(); setMenu($('#acct-menu').hidden); };
+  $('#signout').onclick = () => { setMenu(false); signOut(); };
+}
+function setMenu(open) {
+  const menu = $('#acct-menu'), btn = $('#avatar');
+  if (!menu) return;
+  menu.hidden = !open; btn.setAttribute('aria-expanded', open);
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-signin]')) signIn();
+  if (!e.target.closest('.acct')) setMenu(false);
+});
+document.addEventListener('keydown', e => {
+  const menu = $('#acct-menu');
+  if (e.key === 'Escape' && menu && !menu.hidden) { setMenu(false); $('#avatar').focus(); }
+});
+
+/* Redraw whatever page is open after the ratings change from outside (sign-in, another device). */
+function rerender() {
+  const v = app.dataset.view;
+  if (v === 'mine') renderMine();
+  else if (v === 'show' && current) { const p = $('#season-panel'), y = scrollY; drawShow(p && p.dataset.season ? +p.dataset.season : null); scrollTo(0, y); }
+  else if (v === 'home') renderHome();
+}
 
 /* ---------- API ---------- */
 const cache = new Map();
@@ -349,7 +575,7 @@ function api(path) {
 /* ---------- Helpers ---------- */
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const strip = h => h ? (new DOMParser().parseFromString(h, 'text/html').body.textContent || '').trim() : '';
-const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const plural = (n, w) => `${n} ${w}${n === 1 || w === 'series' ? '' : 's'}`;
 const avgOf = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
 const one = v => (Math.round(v * 10) / 10).toFixed(1);
 const initials = n => esc(String(n || '?').split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase());
@@ -377,7 +603,7 @@ function isAired(ep) {
 }
 const heat = v => ({ c: `color-mix(in srgb, var(--signal) ${Math.round(18 + v * 8.2)}%, var(--sunk))`, t: v >= 6 ? 'var(--signal-ink)' : 'var(--ink)' });
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2000); }
-function setTitle(t) { document.title = t ? `${t} | Episodic` : 'Episodic'; }
+function setTitle(t) { document.title = t ? `${t} | Tenbars` : 'Tenbars'; }
 function setNav(v) { $$('[data-nav]').forEach(a => { const on = a.dataset.nav === v; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); }); app.dataset.view = v; }
 const skeletons = n => Array.from({ length: n }, () => `<div><div class="poster skel"></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-line" style="width:45%"></div></div>`).join('');
 function failBox(target, msg, retry) {
@@ -726,7 +952,7 @@ function ensureRec() {
 function commit(r) {
   r.updated = Date.now();
   if (!r.showRating && !Object.keys(r.episodes).length) delete store.shows[r.id];
-  save(); refreshStats();
+  save([r.id]); refreshStats();
 }
 function setEpRating(ep, v) {
   const r = ensureRec();
@@ -790,6 +1016,8 @@ function renderMine() {
         <label class="btn" style="cursor:pointer">Import<input type="file" id="import" accept="application/json,.json" hidden></label>
       </div></div>
     <p class="recap">${recap}</p>
+    ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p>`
+      : fb && authReady ? `<p class="sync-note"><span>Sign in to keep these in your account and see them on any device.</span><button type="button" class="btn google" data-signin>${GOOGLE_G}Sign in with Google</button></p>` : ''}
     <ul class="mine" id="mine"></ul>
     ${list.length ? '' : '<a class="btn primary" href="#/">Browse series</a>'}
   </section>`;
@@ -817,12 +1045,12 @@ function renderMine() {
   $('#mine').onclick = e => {
     const b = e.target.closest('[data-remove]'); if (!b) return;
     const id = b.closest('li').dataset.id;
-    if (confirm(`Remove all your scores for ${store.shows[id].name}?`)) { delete store.shows[id]; save(); renderMine(); toast('Scores removed'); }
+    if (confirm(`Remove all your scores for ${store.shows[id].name}?`)) { delete store.shows[id]; save([id]); renderMine(); toast('Scores removed'); }
   };
   if ($('#export')) $('#export').onclick = () => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(store, null, 2)], { type: 'application/json' }));
-    a.download = `episodic-ratings-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `tenbars-ratings-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     toast('Ratings exported');
@@ -835,22 +1063,24 @@ function renderMine() {
         let d = JSON.parse(fr.result);
         if (!d || typeof d.shows !== 'object') throw 0;
         if ((d.version || 1) < 2) d = fromV1(d);
-        let n = 0;
+        const changed = [];
         for (const [k, v] of Object.entries(d.shows)) {
           if (!v || typeof v.episodes !== 'object') continue;
           const cur = store.shows[k];
-          if (!cur || (v.updated || 0) > (cur.updated || 0)) { store.shows[k] = v; n++; }
+          if (!cur || (v.updated || 0) > (cur.updated || 0)) { store.shows[k] = { ...v, id: +k }; changed.push(k); }
         }
-        save(); renderMine(); toast(`Imported ${plural(n, 'series').replace('serieses', 'series')}`);
-      } catch (err) { toast('That file isn’t an Episodic export. Choose the .json file you exported.'); }
+        const n = changed.length;
+        save(changed); renderMine(); toast(`Imported ${plural(n, 'series').replace('serieses', 'series')}`);
+      } catch (err) { toast('That file isn’t a Tenbars export. Choose the .json file you exported.'); }
     };
     fr.readAsText(f);
   };
   draw();
 }
 
-window.addEventListener('storage', e => { if (e.key === KEY) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
+window.addEventListener('storage', e => { if (e.key === localKey() && !user) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
 route();
+initAccounts();
 })();
 </script>
 </body>
