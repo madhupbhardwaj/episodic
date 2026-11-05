@@ -2,6 +2,8 @@ import React from "react";
 import {
   AbsoluteFill,
   Easing,
+  Img,
+  staticFile,
   interpolate,
   random,
   useCurrentFrame,
@@ -400,7 +402,7 @@ export const Card: React.FC<{
   </div>
 );
 
-/** Stylized poster for The Mentalist (no copyrighted art). */
+/** The Mentalist poster (TVmaze, same image source as tenbars.vercel.app). */
 export const Poster: React.FC<{ w: number; h: number; radius?: number }> = ({
   w,
   h,
@@ -412,50 +414,14 @@ export const Poster: React.FC<{ w: number; h: number; radius?: number }> = ({
       height: h,
       borderRadius: radius,
       overflow: "hidden",
-      position: "relative",
-      background:
-        "linear-gradient(160deg, #3A1414 0%, #1A0B0F 55%, #0E0A12 100%)",
-      boxShadow: "0 18px 40px rgba(0,0,0,0.5)",
+      background: C.surface2,
+      boxShadow: "0 18px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08)",
       flex: "none",
     }}
   >
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        background:
-          "radial-gradient(60% 45% at 50% 38%, rgba(214,58,58,0.55) 0%, rgba(214,58,58,0) 70%)",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: h * 0.09,
-        textAlign: "center",
-        fontFamily: display,
-        color: "#F3E9E4",
-        fontSize: w * 0.15,
-        letterSpacing: w * 0.012,
-        lineHeight: 1,
-      }}
-    >
-      THE
-      <br />
-      MENTALIST
-    </div>
-    <div
-      style={{
-        position: "absolute",
-        left: "50%",
-        top: h * 0.2,
-        width: w * 0.42,
-        height: w * 0.42,
-        marginLeft: -w * 0.21,
-        borderRadius: 999,
-        border: `${Math.max(2, w * 0.02)}px solid rgba(232,90,90,0.75)`,
-      }}
+    <Img
+      src={staticFile("images/the-mentalist.jpg")}
+      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
     />
   </div>
 );
