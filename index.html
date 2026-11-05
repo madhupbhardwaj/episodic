@@ -336,6 +336,9 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .field>input{height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 14px;font-size:16px;outline:none}
 .field .at input{height:44px}
 .field small{font-size:13px;color:var(--ink-2)}
+.field small.ok{color:#1A8A55}
+.field small.bad{color:#C2362B}
+@media (prefers-color-scheme:dark){.field small.ok{color:#5FD39A}.field small.bad{color:#FF8A80}}
 .check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:15px;max-width:56ch}
 .check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--signal);flex:none}
 .form-err{margin:12px 0 0;font-size:14px;color:#C2362B}
@@ -1309,14 +1312,36 @@ function profileForm(box, prof) {
     <form id="profile-form" novalidate>
       <div class="field"><label for="pf-user">Username</label>
         <div class="at"><span aria-hidden="true">@</span><input id="pf-user" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="20" value="${esc(prof ? prof.username : '')}" placeholder="madhup" required></div>
-        <small>3 to 20 characters: lowercase letters, numbers and underscores.</small></div>
+        <small id="pf-status" aria-live="polite">3 to 20 characters: lowercase letters, numbers and underscores.</small></div>
       <div class="field"><label for="pf-name">Display name</label><input id="pf-name" maxlength="40" value="${esc(prof ? prof.name : user.name)}"></div>
       <label class="check"><input type="checkbox" id="pf-public" ${!prof || prof.public ? 'checked' : ''}><span>Let anyone with my link, or who searches my username, see my ratings</span></label>
       <p class="form-err" id="pf-err" role="alert" hidden></p>
       <div class="form-acts"><button class="btn primary" type="submit">${fresh ? 'Create profile' : 'Save changes'}</button>${fresh ? '' : '<button class="btn quiet" type="button" id="pf-cancel">Cancel</button>'}</div>
     </form>`;
-  const u = $('#pf-user'), err = $('#pf-err');
-  u.oninput = () => { const v = u.value.toLowerCase().replace(/[^a-z0-9_]/g, ''); if (v !== u.value) u.value = v; err.hidden = true; };
+  const u = $('#pf-user'), err = $('#pf-err'), status = $('#pf-status');
+  const RULE = '3 to 20 characters: lowercase letters, numbers and underscores.';
+  const say = (text, cls = '') => { status.textContent = text; status.className = cls; };
+  let checkT, checkSeq = 0;
+  const check = async () => {
+    const v = u.value, my = ++checkSeq;
+    if (!v) return say(RULE);
+    if (!USERNAME_RE.test(v)) return say(v.length < 3 ? 'Too short. Use at least 3 characters.' : RULE, 'bad');
+    if (prof && prof.username === v) return say('This is your current username.', 'ok');
+    say(`Checking @${v}…`);
+    try {
+      const snap = await fb.fs.getDoc(fb.fs.doc(fb.db, 'usernames', v));
+      if (my !== checkSeq) return;
+      if (snap.exists() && snap.data().uid !== user.uid) say(`@${v} is taken. Try another.`, 'bad');
+      else say(`@${v} is available.`, 'ok');
+    } catch (e) { if (my === checkSeq) say(RULE); }
+  };
+  u.oninput = () => {
+    const v = u.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (v !== u.value) u.value = v;
+    err.hidden = true;
+    clearTimeout(checkT); checkT = setTimeout(check, 350);
+  };
+  if (u.value) check();
   const cancel = $('#pf-cancel'); if (cancel) cancel.onclick = renderProfileCard;
   $('#profile-form').onsubmit = async e => {
     e.preventDefault();
