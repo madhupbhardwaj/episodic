@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="Tenbars">
 <meta name="theme-color" content="#ECEDEF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232638E8'/%3E%3Crect x='7' y='18' width='4' height='7' rx='1' fill='white'/%3E%3Crect x='14' y='13' width='4' height='12' rx='1' fill='white'/%3E%3Crect x='21' y='7' width='4' height='18' rx='1' fill='white'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232638E8' d='M16.00 1.00 L19.52 5.16 L24.82 3.86 L25.22 9.30 L30.27 11.36 L27.40 16.00 L30.27 20.64 L25.22 22.70 L24.82 28.14 L19.52 26.84 L16.00 31.00 L12.48 26.84 L7.18 28.14 L6.78 22.70 L1.73 20.64 L4.60 16.00 L1.73 11.36 L6.78 9.30 L7.18 3.86 L12.48 5.16Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -50,9 +50,9 @@ h1,h2,h3{margin:0;font-weight:400}
 /* ---------- Header ---------- */
 .top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top-inner{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;min-height:68px}
-.brand{display:inline-flex;align-items:flex-end;gap:8px;font-family:var(--display);font-size:30px;line-height:1;letter-spacing:-.01em}
-.brand svg{width:33px;height:18px;margin-bottom:5px;flex:none}
-.brand svg rect{fill:var(--signal)}
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--display);font-size:30px;line-height:1;letter-spacing:-.01em}
+.brand svg{width:28px;height:28px;flex:none;margin-top:-2px}
+.brand svg path{fill:var(--signal)}
 .nav{display:flex;gap:22px;font-size:15px;font-weight:500}
 .nav a{color:var(--ink-2);padding:6px 0;border-bottom:2px solid transparent}
 .nav a:hover{color:var(--ink)}
@@ -237,6 +237,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 @media (max-width:760px){
   .top-inner{grid-template-columns:1fr auto;gap:10px 16px;padding-top:10px;padding-bottom:12px}
   .brand{font-size:27px}
+  .brand svg{width:25px;height:25px}
   .search{grid-column:1/-1;grid-row:2;max-width:none}
   .nav{gap:16px;font-size:14px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:22px 14px}
@@ -295,7 +296,6 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 @media (max-width:480px){.nav a[data-nav="home"]{display:none}}
 .nav .sm{display:none}
 @media (max-width:480px){.nav .lg{display:none}.nav .sm{display:inline}}
-@media (max-width:360px){.brand svg{display:none}}
 .acct-menu .menu-link{display:block;margin-top:12px;font-size:14px;font-weight:600;color:var(--signal)}
 
 /* ---------- People + profiles ---------- */
@@ -370,7 +370,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 <body>
 <header class="top">
   <div class="wrap top-inner">
-    <a href="#/" class="brand" aria-label="Tenbars home">Tenbars<svg viewBox="0 0 32.8 18" aria-hidden="true"><rect x="0" y="14.0" width="2.2" height="4.0" rx=".6"/><rect x="3.4" y="12.4" width="2.2" height="5.6" rx=".6"/><rect x="6.8" y="10.9" width="2.2" height="7.1" rx=".6"/><rect x="10.2" y="9.3" width="2.2" height="8.7" rx=".6"/><rect x="13.6" y="7.8" width="2.2" height="10.2" rx=".6"/><rect x="17" y="6.2" width="2.2" height="11.8" rx=".6"/><rect x="20.4" y="4.7" width="2.2" height="13.3" rx=".6"/><rect x="23.8" y="3.1" width="2.2" height="14.9" rx=".6"/><rect x="27.2" y="1.6" width="2.2" height="16.4" rx=".6"/><rect x="30.6" y="0.0" width="2.2" height="18.0" rx=".6"/></svg></a>
+    <a href="#/" class="brand" aria-label="Tenbars home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.00 1.00 L19.52 5.16 L24.82 3.86 L25.22 9.30 L30.27 11.36 L27.40 16.00 L30.27 20.64 L25.22 22.70 L24.82 28.14 L19.52 26.84 L16.00 31.00 L12.48 26.84 L7.18 28.14 L6.78 22.70 L1.73 20.64 L4.60 16.00 L1.73 11.36 L6.78 9.30 L7.18 3.86 L12.48 5.16Z"/></svg>Tenbars</a>
     <form class="search" id="search-form" role="search" autocomplete="off">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <label class="sr" for="q">Search series</label>
