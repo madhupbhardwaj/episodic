@@ -19,6 +19,13 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%232638E8' d='M16.00 1.00 L19.52 5.16 L24.82 3.86 L25.22 9.30 L30.27 11.36 L27.40 16.00 L30.27 20.64 L25.22 22.70 L24.82 28.14 L19.52 26.84 L16.00 31.00 L12.48 26.84 L7.18 28.14 L6.78 22.70 L1.73 20.64 L4.60 16.00 L1.73 11.36 L6.78 9.30 L7.18 3.86 L12.48 5.16Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.tvmaze.com" crossorigin>
+<link rel="preconnect" href="https://static.tvmaze.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js">
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -510,6 +517,18 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const app = $('#app');
 
+/* Small helpers for things kept on this device to make repeat visits instant */
+function readJSON(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+/* Keep only the newest few cached profiles so storage stays small */
+function cacheProfile(name, data) {
+  const idx = (readJSON('tenbars.pidx') || []).filter(n => n !== name);
+  idx.unshift(name);
+  idx.splice(6).forEach(n => { try { localStorage.removeItem('tenbars.p.' + n); } catch (e) {} });
+  if (!writeJSON('tenbars.p.' + name, data)) return;
+  writeJSON('tenbars.pidx', idx.slice(0, 6));
+}
+
 /* ---------- Storage (scores are 1–10) ---------- */
 function fromV1(d) {
   const out = { version: 2, shows: {} };
@@ -586,7 +605,11 @@ async function initAccounts() {
   try {
     const [a, au, fs] = await Promise.all(['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => import(base + f)));
     const fbApp = a.initializeApp(FIREBASE_CONFIG);
-    fb = { auth: au.getAuth(fbApp), db: fs.initializeFirestore(fbApp, { ignoreUndefinedProperties: true }), au, fs };
+    // Keep a copy of the account's data in this browser so repeat visits show instantly.
+    let db;
+    try { db = fs.initializeFirestore(fbApp, { ignoreUndefinedProperties: true, localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) }); }
+    catch (e) { db = fs.initializeFirestore(fbApp, { ignoreUndefinedProperties: true }); }
+    fb = { auth: au.getAuth(fbApp), db, au, fs };
     fbReadyDone(fb);
     au.getRedirectResult(fb.auth).catch(authError);
     au.onAuthStateChanged(fb.auth, onUser);
@@ -600,7 +623,7 @@ function onUser(u) {
   authReady = true;
   if (unsub) { unsub(); unsub = null; }
   user = u ? { uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '' } : null;
-  myProfile = user ? undefined : null;
+  myProfile = user ? (readJSON('tenbars.me.' + user.uid) || undefined) : null;
   renderAccount();
   authSettledDone();
   if (!user) { store = load(); rerender(); return; }
@@ -613,9 +636,20 @@ function onUser(u) {
 
   const { collection, onSnapshot } = fb.fs;
   let first = true;
-  unsub = onSnapshot(collection(fb.db, 'users', user.uid, 'shows'), snap => {
+  unsub = onSnapshot(collection(fb.db, 'users', user.uid, 'shows'), { includeMetadataChanges: true }, snap => {
     const toPush = [];
     let changed = false;
+    // A copy kept in this browser arrives first. Show it right away, but only trust the
+    // server's answer when deciding what to upload or what was deleted elsewhere.
+    if (first && snap.metadata.fromCache) {
+      let any = false;
+      snap.forEach(d => {
+        const r = { ...d.data(), id: +d.id }, l = store.shows[d.id];
+        if (!l || (r.updated || 0) > (l.updated || 0)) { store.shows[d.id] = r; any = true; }
+      });
+      if (any) { try { localStorage.setItem(localKey(), JSON.stringify(store)); } catch (e) {} rerender(); }
+      return;
+    }
     if (first) {
       first = false;
       const cloud = {};
@@ -954,15 +988,23 @@ async function renderHome() {
   $('#intro-form').onsubmit = e => { e.preventDefault(); const q = $('#intro-q').value.trim(); if (q) go('#/search/' + encodeURIComponent(q)); };
   try {
     if (!popular.length) {
+      // The popular list barely changes, so keep a trimmed copy on this device for a day.
+      const saved = readJSON('tenbars.popular');
+      if (saved && Array.isArray(saved.list) && saved.list.length && Date.now() - saved.t < 864e5) popular = saved.list;
+    }
+    if (!popular.length) {
       const pages = await Promise.all([0, 1, 2].map(p => api('/shows?page=' + p).catch(() => [])));
       popular = pages.flat().filter(s => s.image && s.language)
         .sort((a, b) => (b.weight || 0) - (a.weight || 0) || ((b.rating && b.rating.average) || 0) - ((a.rating && a.rating.average) || 0))
-        .slice(0, 60);
+        .slice(0, 60)
+        .map(({ id, name, image, genres, premiered, ended, status, network, webChannel, rating, weight, language }) => ({ id, name, image, genres, premiered, ended, status, network, webChannel, rating, weight, language }));
       if (!popular.length) throw new Error('empty');
+      writeJSON('tenbars.popular', { t: Date.now(), list: popular });
+      cache.delete('/shows?page=0'); cache.delete('/shows?page=1'); cache.delete('/shows?page=2'); // free the big responses
     }
     if (id !== renderId) return;
     const stack = $('#stack');
-    stack.innerHTML = popular.slice(0, 3).map(s => `<a href="#/show/${s.id}" tabindex="-1"><img src="${esc(s.image.original || s.image.medium)}" alt=""></a>`).join('');
+    stack.innerHTML = popular.slice(0, 3).map(s => `<a href="#/show/${s.id}" tabindex="-1"><img src="${esc(s.image.original || s.image.medium)}" alt="" decoding="async" loading="lazy"></a>`).join('');
     requestAnimationFrame(() => requestAnimationFrame(() => stack.classList.add('fan')));
     const counts = {};
     popular.forEach(s => (s.genres || []).forEach(g => counts[g] = (counts[g] || 0) + 1));
@@ -1422,6 +1464,7 @@ async function loadMyProfile() {
     const snap = await getDoc(doc(fb.db, 'profiles', uid));
     if (!user || user.uid !== uid) return;
     myProfile = snap.exists() ? snap.data() : null;
+    writeJSON('tenbars.me.' + uid, myProfile);
     if (myProfile && user.photo && myProfile.photo !== user.photo) {
       myProfile.photo = user.photo;
       setDoc(doc(fb.db, 'profiles', uid), { photo: user.photo }, { merge: true }).catch(() => {});
@@ -1446,6 +1489,7 @@ async function saveProfile({ username, name, isPublic }) {
     tx.set(doc(fb.db, 'profiles', uid), data);
   });
   myProfile = data;
+  writeJSON('tenbars.me.' + uid, data);
 }
 
 /* Find public profiles whose username starts with q. */
@@ -1464,20 +1508,26 @@ async function searchPeople(q, n = 10) {
 }
 
 /* Look up one profile by username. Returns null (no such user), {private:true}, or the profile. */
-async function findProfile(name) {
-  const { doc, getDoc } = fb.fs;
+async function findProfile(name, withShows, oneShow) {
+  const { doc, getDoc, collection, getDocs } = fb.fs;
   const s = cleanName(name);
   if (!s) return null;
   const u = await getDoc(doc(fb.db, 'usernames', s));
   if (!u.exists()) return null;
   const uid = u.data().uid;
   try {
-    const p = await getDoc(doc(fb.db, 'profiles', uid));
+    // The profile and their series are fetched together, not one after the other.
+    const soft = e => { if (e.code === 'permission-denied') return null; throw e; };
+    const [p, sn, one] = await Promise.all([
+      getDoc(doc(fb.db, 'profiles', uid)),
+      withShows ? getDocs(collection(fb.db, 'users', uid, 'shows')).catch(soft) : null,
+      oneShow ? getDoc(doc(fb.db, 'users', uid, 'shows', String(oneShow))).then(x => x.exists() ? x.data() : null).catch(soft) : undefined
+    ]);
     if (!p.exists()) return null;
     const d = p.data();
     const own = !!(user && user.uid === uid);
     if (!d.public && !own) return { private: true };
-    return { ...d, uid, own };
+    return { ...d, uid, own, rows: sn ? sn.docs.map(x => ({ ...x.data(), id: +x.id })) : undefined, rec: one };
   } catch (e) {
     if (e.code === 'permission-denied') return { private: true };
     throw e;
@@ -1617,29 +1667,48 @@ function profileGate(prof, name) {
 /* A user's public profile */
 async function renderProfile(name) {
   const id = ++renderId; current = null; setNav('people'); setTitle('@' + cleanName(name));
-  app.innerHTML = `<section class="wrap page"><div class="prof-head"><span class="av lg skel"></span><div><div class="skel skel-line" style="height:36px;width:240px"></div><div class="skel skel-line" style="width:120px"></div></div></div></section>`;
+  // A profile you've opened before appears at once from this device, then is refreshed.
+  const ckey = cleanName(name), cached = readJSON('tenbars.p.' + ckey);
+  const hasCache = !!(cached && cached.prof && Array.isArray(cached.rows));
+  if (hasCache) paintProfile({ ...cached.prof, own: !!(user && user.uid === cached.prof.uid) }, cached.rows);
+  else app.innerHTML = `<section class="wrap page"><div class="prof-head"><span class="av lg skel"></span><div><div class="skel skel-line" style="height:36px;width:240px"></div><div class="skel skel-line" style="width:120px"></div></div></div></section>`;
   const f = await fbReady;
   if (id !== renderId) return;
-  if (!f) { app.innerHTML = `<section class="wrap page"><div class="empty">Profiles aren’t set up on this site yet.</div></section>`; return; }
-  await authSettled;
+  if (!f) { if (!hasCache) app.innerHTML = `<section class="wrap page"><div class="empty">Profiles aren’t set up on this site yet.</div></section>`; return; }
   let prof, rows;
   try {
-    prof = await findProfile(name);
+    prof = await findProfile(name, true);
+    // Public profiles don't need sign-in; only wait for it if this might be the viewer's own private one.
+    if ((!prof || prof.private) && !authReady) {
+      await authSettled;
+      if (id !== renderId) return;
+      prof = await findProfile(name, true);
+    }
     if (prof && !prof.private) {
-      const { collection, getDocs } = fb.fs;
-      const snap = await getDocs(collection(fb.db, 'users', prof.uid, 'shows'));
-      rows = snap.docs.map(d => ({ ...d.data(), id: +d.id }));
+      rows = prof.rows;
+      if (!rows) {
+        const { collection, getDocs } = fb.fs;
+        const snap = await getDocs(collection(fb.db, 'users', prof.uid, 'shows'));
+        rows = snap.docs.map(d => ({ ...d.data(), id: +d.id }));
+      }
     }
   } catch (e) {
     if (id !== renderId) return;
     console.error(e);
+    if (hasCache) return; // keep showing the saved copy
     app.innerHTML = `<section class="wrap page"><div id="err"></div></section>`;
     failBox($('#err'), 'This profile didn’t load. Check your internet connection.', () => renderProfile(name));
     return;
   }
   if (id !== renderId) return;
   const gate = profileGate(prof, name);
-  if (gate) { app.innerHTML = `<section class="wrap page">${gate}</section>`; return; }
+  if (gate) { try { localStorage.removeItem('tenbars.p.' + ckey); } catch (e) {} app.innerHTML = `<section class="wrap page">${gate}</section>`; return; }
+  const { own: _own, rows: _rows, ...plain } = prof;
+  cacheProfile(ckey, { prof: plain, rows });
+  if (hasCache && JSON.stringify([cached.prof, cached.rows]) === JSON.stringify([plain, rows])) return; // nothing changed
+  paintProfile(prof, rows);
+}
+function paintProfile(prof, rows) {
   setTitle(`${prof.name || prof.username} (@${prof.username})`);
   const all = rows.flatMap(r => Object.values(r.episodes || {}));
   const who = firstName(prof);
@@ -1681,19 +1750,24 @@ async function renderProfile(name) {
 async function renderTheirShow(name, showId, seasonNum) {
   const id = ++renderId; current = null; setNav('people');
   app.innerHTML = `<div class="wrap page"><div class="show-head"><div class="show-poster skel"></div><div class="show-title"><div class="skel skel-line" style="height:48px;width:60%"></div><div class="skel skel-line" style="width:35%"></div></div></div></div>`;
+  // Start the series details downloading straight away, while the profile is looked up.
+  const showP = api(`/shows/${showId}?embed[]=seasons&embed[]=episodes`);
+  showP.catch(() => {});
   const f = await fbReady;
   if (id !== renderId) return;
   if (!f) { app.innerHTML = `<section class="wrap page"><div class="empty">Profiles aren’t set up on this site yet.</div></section>`; return; }
-  await authSettled;
   let prof, rec, d;
   try {
-    prof = await findProfile(name);
+    const lookup = () => findProfile(name, false, showId);
+    prof = await lookup();
+    if ((!prof || prof.private) && !authReady) {
+      await authSettled;
+      if (id !== renderId) return;
+      prof = await lookup();
+    }
     if (prof && !prof.private) {
-      const { doc, getDoc } = fb.fs;
-      [rec, d] = await Promise.all([
-        getDoc(doc(fb.db, 'users', prof.uid, 'shows', String(showId))).then(x => x.exists() ? x.data() : null),
-        api(`/shows/${showId}?embed[]=seasons&embed[]=episodes`)
-      ]);
+      rec = prof.rec || null;
+      d = await showP;
     }
   } catch (e) {
     if (id !== renderId) return;
@@ -1778,6 +1852,18 @@ async function renderTheirShow(name, showId, seasonNum) {
 }
 
 window.addEventListener('storage', e => { if (e.key === localKey() && !user) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
+/* Begin downloading a series as soon as a cursor rests on it or a finger touches it. */
+let warmT;
+const warm = e => {
+  const a = e.target.closest && e.target.closest('a[href^="#/show/"]');
+  if (!a) return;
+  const m = /^#\/show\/(\d+)/.exec(a.getAttribute('href'));
+  if (m) api(`/shows/${m[1]}?embed[]=seasons&embed[]=episodes`).catch(() => {});
+};
+document.addEventListener('pointerover', e => { if (e.pointerType === 'touch') return; clearTimeout(warmT); warmT = setTimeout(() => warm(e), 140); }, { passive: true });
+document.addEventListener('pointerout', () => clearTimeout(warmT), { passive: true });
+document.addEventListener('touchstart', warm, { passive: true });
+
 route();
 initAccounts();
 })();
