@@ -128,7 +128,7 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:34px;background
 .bars i{display:block;width:var(--w,6px);border-radius:1.5px;background:var(--sunk);transition:background-color .12s}
 .bars i.f{background:var(--signal)}
 .meter.preview .bars i.f{background:color-mix(in srgb,var(--signal) 55%,var(--sunk))}
-.meter.live .bars{cursor:pointer}
+.meter.live .bars{cursor:pointer;touch-action:pan-y}
 .meter-val{font-family:var(--display);font-size:var(--fs,20px);line-height:1;min-width:calc(var(--fs,20px) * 2.6);font-variant-numeric:tabular-nums}
 .meter-val small{font-family:var(--sans);font-size:.55em;color:var(--ink-2);margin-left:1px}
 .meter-val.none{font-family:var(--sans);font-size:14px;color:var(--ink-2)}
@@ -288,14 +288,14 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);padding:0;overflow:hidden;background:var(--sunk);font-weight:600;font-size:15px;display:grid;place-items:center}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .acct-menu{position:absolute;right:0;top:calc(100% + 8px);width:240px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.18);padding:14px;z-index:10}
-.acct-menu b{display:block;font-size:15px;font-weight:600}
-.acct-menu span{display:block;font-size:13px;color:var(--ink-2);overflow-wrap:anywhere}
+.acct-menu .who{display:block;font-size:15px;font-weight:600}
+.acct-menu .email{display:block;font-size:13px;color:var(--ink-2);overflow-wrap:anywhere}
 .acct-menu .btn{width:100%;margin-top:14px}
 .sync-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:-18px 0 32px;font-size:15px;color:var(--ink-2)}
 .sync-note .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1FA463;margin-right:8px;vertical-align:1px}
 @media (max-width:480px){.nav a[data-nav="home"]{display:none}}
 .nav .sm{display:none}
-@media (max-width:480px){.nav .lg{display:none}.nav .sm{display:inline}}
+@media (max-width:1100px){.nav .lg{display:none}.nav .sm{display:inline}}
 .acct-menu .menu-link{display:block;margin-top:12px;font-size:14px;font-weight:600;color:var(--signal)}
 
 /* ---------- People + profiles ---------- */
@@ -390,6 +390,59 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .lvl-mark.pop{animation:pop .5s cubic-bezier(.2,.8,.2,1.4) both}
 @keyframes pop{from{transform:scale(.6) rotate(-30deg)}to{transform:none}}
 @media (max-width:760px){.level-card{padding:16px}.level-top h2{font-size:26px}.lvl-mark.lg{width:56px;height:56px}.lvl-mark.lg .n{font-size:22px}}
+/* ---------- Account button: level + avatar ---------- */
+.acct-btn{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 4px 0 7px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.acct-btn:hover{border-color:var(--ink-2)}
+.acct-btn .lvl-mark{width:28px;height:28px}
+.acct-btn .lvl-mark .n{font-size:12px}
+.acct-btn .avatar{width:34px;height:34px;border:0}
+.acct-menu{width:270px;padding:16px}
+.acct-menu .lvl-line{display:flex;align-items:center;gap:12px;margin-top:14px;padding:10px 12px;border-radius:8px;background:var(--signal-soft);color:var(--ink)}
+.acct-menu .lvl-line .lvl-mark{width:34px;height:34px}
+.acct-menu .lvl-line .lvl-mark .n{font-size:13px}
+.acct-menu .lvl-line strong{display:block;font-size:14px;font-weight:600}
+.acct-menu .lvl-line small{display:block;font-size:13px;color:var(--ink-2)}
+.acct-menu .menu-item{display:flex;align-items:center;min-height:44px;margin-top:6px;padding:0 4px;font-size:15px;font-weight:500;color:var(--ink);border-bottom:1px solid var(--line)}
+.acct-menu .menu-item:hover{color:var(--signal)}
+
+/* ---------- Bottom tab bar (phones) ---------- */
+.tabbar{display:none}
+.season-next{display:flex;justify-content:flex-end;padding-top:20px}
+@media (max-width:760px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);position:fixed;left:0;right:0;bottom:0;z-index:45;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .tabbar a,.tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;padding:0;background:none;border:0;font-size:12px;font-weight:500;color:var(--ink-2)}
+  .tabbar svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar .on{color:var(--signal)}
+  .tabbar .on svg{stroke-width:2.3}
+  .tabbar [hidden]{display:none}
+  .nav>a{display:none}
+  .top-inner{min-height:60px;padding-top:8px;padding-bottom:8px}
+  .search{display:none}
+  body.search-open .search,body[data-view="search"] .search{display:block}
+  body.search-open .top-inner,body[data-view="search"] .top-inner{padding-bottom:12px}
+  .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+  .filters{flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 calc(var(--gutter) * -1);padding:0 var(--gutter);gap:0 20px}
+  .filters::-webkit-scrollbar{display:none}
+  .filters button{flex:none}
+  .season-next{justify-content:stretch}
+  .season-next .btn{width:100%}
+}
+
+/* ---------- Touch screens (and any phone-width screen): bigger targets ---------- */
+@media (pointer:coarse),(max-width:760px){
+  .meter.live{--h:36px;--w:12px;--g:5px}
+  .meter.live .bars{padding:6px 0}
+  .nav a{padding:12px 0}
+  .brand{min-height:44px}
+  .filters button{min-height:44px}
+  .more{min-height:36px;padding:6px 0}
+  .back{padding:10px 0;margin-bottom:8px}
+  .sec-head .link{display:inline-flex;align-items:center;min-height:44px}
+  .mine h3 a{display:inline-block;padding:8px 0}
+  .season-nav button{min-height:54px}
+  .hint a{display:inline-block;padding:8px 0}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
@@ -415,6 +468,13 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 </header>
 
 <main id="app"></main>
+
+<nav class="tabbar" aria-label="Main">
+  <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Browse</a>
+  <button type="button" id="tab-search" data-nav="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg>Search</button>
+  <a href="#/mine" data-nav="mine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>Ratings</a>
+  <a href="#/people" data-nav="people" id="tab-people" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="8.5" r="2.8"/><path d="M16.2 14.5c2.8.3 4.6 2.1 5.3 5.5"/></svg>People</a>
+</nav>
 
 <footer>
   <div class="wrap">
@@ -476,6 +536,7 @@ function save(ids) {
   try { localStorage.setItem(localKey(), JSON.stringify(store)); }
   catch (e) { if (!user) toast('Ratings could not be saved. This browser is blocking storage.'); }
   if (user && ids) queuePush(ids);
+  refreshLevelChip();
 }
 let store = load();
 
@@ -520,7 +581,7 @@ async function push() {
 
 async function initAccounts() {
   if (!accountsOn) { renderAccount(); fbReadyDone(null); authSettledDone(); return; }
-  $('#nav-people').hidden = false;
+  $('#nav-people').hidden = false; $('#tab-people').hidden = false;
   const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/`;
   try {
     const [a, au, fs] = await Promise.all(['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => import(base + f)));
@@ -635,11 +696,26 @@ function renderAccount() {
   }
   const initial = esc((user.name || user.email || '?').trim()[0].toUpperCase());
   el.innerHTML = `<div class="acct">
-    <button type="button" class="avatar" id="avatar" aria-haspopup="true" aria-expanded="false" aria-label="Account: ${esc(user.name || user.email)}">${user.photo ? `<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">` : initial}</button>
-    <div class="acct-menu" id="acct-menu" hidden><b>${esc(user.name || 'Signed in')}</b><span>${esc(user.email)}</span>${myProfile ? `<a class="menu-link" href="${profileHref(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-link" href="#/mine">Pick a username so friends can find you</a>` : ''}<button type="button" class="btn" id="signout">Sign out</button></div></div>`;
+    <button type="button" class="acct-btn" id="avatar" aria-haspopup="true" aria-expanded="false"><span id="acct-lvl"></span><span class="avatar">${user.photo ? `<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">` : initial}</span></button>
+    <div class="acct-menu" id="acct-menu" hidden><b class="who">${esc(user.name || 'Signed in')}</b><span class="email">${esc(user.email)}</span>
+      <a class="lvl-line" id="acct-lvl-line" href="#/mine"></a>
+      <a class="menu-item" href="#/mine">Your ratings</a>
+      ${myProfile ? `<a class="menu-item" href="${profileHref(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-item" href="#/mine">Pick a username so friends can find you</a>` : ''}
+      <button type="button" class="btn" id="signout">Sign out</button></div></div>`;
+  refreshLevelChip();
   note.textContent = `Your ratings are saved to your Google account (${user.email}), so they show up wherever you sign in.`;
   $('#avatar').onclick = e => { e.stopPropagation(); setMenu($('#acct-menu').hidden); };
   $('#signout').onclick = () => { setMenu(false); signOut(); };
+}
+/* The level number beside the profile picture, and the level line in the account menu. */
+function refreshLevelChip() {
+  const chip = $('#acct-lvl'); if (!chip || !user) return;
+  const count = episodeCount(), { cur, next } = levelFor(count);
+  chip.innerHTML = cur ? levelMark(cur.n) : levelMark('0', 'off');
+  $('#avatar').setAttribute('aria-label', `Account menu for ${user.name || user.email}. ${cur ? `Level ${cur.n}, ${cur.name}` : 'No level yet'}.`);
+  $('#avatar').title = cur ? `Level ${cur.n}: ${cur.name}` : 'No level yet';
+  const line = $('#acct-lvl-line');
+  if (line) line.innerHTML = `${cur ? levelMark(cur.n) : levelMark('0', 'off')}<span class="lvl-text"><strong>${cur ? `Level ${cur.n}, ${esc(cur.name)}` : 'No level yet'}</strong><small>${next ? `${plural(next.at - count, 'more episode')} to ${esc(next.name)}` : 'Top level reached'}</small></span>`;
 }
 function setMenu(open) {
   const menu = $('#acct-menu'), btn = $('#avatar');
@@ -657,6 +733,7 @@ document.addEventListener('keydown', e => {
 
 /* Redraw whatever page is open after the ratings change from outside (sign-in, another device). */
 function rerender() {
+  refreshLevelChip();
   const v = app.dataset.view;
   if (v === 'mine') renderMine();
   else if (v === 'show' && current) { const p = $('#season-panel'), y = scrollY; drawShow(p && p.dataset.season ? +p.dataset.season : null); scrollTo(0, y); }
@@ -714,7 +791,7 @@ function isAired(ep) {
 const heat = v => ({ c: `color-mix(in srgb, var(--signal) ${Math.round(18 + v * 8.2)}%, var(--sunk))`, t: v >= 6 ? 'var(--signal-ink)' : 'var(--ink)' });
 function toast(m, ms = 2000) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
 function setTitle(t) { document.title = t ? `${t} | Tenbars` : 'Tenbars'; }
-function setNav(v) { $$('[data-nav]').forEach(a => { const on = a.dataset.nav === v; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); }); app.dataset.view = v; }
+function setNav(v) { document.body.dataset.view = v || 'other'; $$('[data-nav]').forEach(a => { const on = a.dataset.nav === v; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); }); app.dataset.view = v; }
 const skeletons = n => Array.from({ length: n }, () => `<div><div class="poster skel"></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-line" style="width:45%"></div></div>`).join('');
 function failBox(target, msg, retry) {
   target.innerHTML = `<div class="empty">${esc(msg)}<br><button class="btn" type="button">Try again</button></div>`;
@@ -750,9 +827,25 @@ function meter(value, onChange, opt = {}) {
     el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
     onChange(cur);
   };
-  bars.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') paint(at(e), true); });
-  bars.addEventListener('pointerleave', () => paint(cur));
-  bars.addEventListener('click', e => { const v = at(e); set(v === cur ? 0 : v); });
+  /* Tap a bar to score, tap it again to clear, or drag sideways across the bars. */
+  let drag = null;
+  bars.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    drag = { start: at(e), moved: false };
+    try { bars.setPointerCapture(e.pointerId); } catch (x) {}
+    paint(drag.start, true);
+  });
+  bars.addEventListener('pointermove', e => {
+    if (drag) { const v = at(e); if (v !== drag.start) drag.moved = true; paint(v, true); }
+    else if (e.pointerType === 'mouse') paint(at(e), true);
+  });
+  bars.addEventListener('pointerup', e => {
+    if (!drag) return;
+    const v = at(e), d = drag; drag = null;
+    set(!d.moved && v === cur ? 0 : v);
+  });
+  bars.addEventListener('pointercancel', () => { drag = null; paint(cur); });
+  bars.addEventListener('pointerleave', () => { if (!drag) paint(cur); });
   bars.addEventListener('keydown', e => {
     const k = e.key;
     if (k === 'ArrowRight' || k === 'ArrowUp') set(cur + 1);
@@ -814,7 +907,7 @@ function route() {
   const key = location.pathname + location.hash;
   if (key === lastRoute) return;
   lastRoute = key;
-  closeSug(); setMenu(false);
+  closeSug(); setMenu(false); document.body.classList.remove('search-open');
   let parts;
   if (atProfilePath()) parts = ['u', ...decodeURIComponent(location.pathname.slice(2)).split('/').filter(Boolean)];
   else {
@@ -887,7 +980,7 @@ async function renderHome() {
 
 /* ---------- Search ---------- */
 async function renderSearch(q) {
-  const id = ++renderId; current = null; setNav(''); setTitle(`Search: ${q}`);
+  const id = ++renderId; current = null; setNav('search'); setTitle(`Search: ${q}`);
   $('#q').value = q;
   app.innerHTML = `<section class="wrap page"><div class="sec-head"><h2>Results for “${esc(q)}”</h2></div><div class="grid" id="res">${skeletons(10)}</div></section>`;
   try {
@@ -941,6 +1034,14 @@ $('#search-form').addEventListener('submit', e => {
 });
 document.addEventListener('click', e => { if (!e.target.closest('.search')) closeSug(); });
 sug.addEventListener('click', () => { closeSug(); qIn.value = ''; });
+/* Phone tab bar: Search jumps to the home page's search box, or opens the header search. */
+$('#tab-search').addEventListener('click', () => {
+  const intro = $('#intro-q');
+  if (app.dataset.view === 'home' && intro) { intro.scrollIntoView({ block: 'center' }); intro.focus(); return; }
+  document.body.classList.add('search-open');
+  window.scrollTo(0, 0); qIn.focus();
+});
+qIn.addEventListener('blur', () => { setTimeout(() => { if (!qIn.value.trim() && document.activeElement !== qIn && !sug.classList.contains('open')) document.body.classList.remove('search-open'); }, 150); });
 
 /* ---------- Show page ---------- */
 function groupEpisodes(d) {
@@ -1076,7 +1177,15 @@ function renderSeason(n) {
         <p>${plural(list.length, 'episode')}${planned}, ${esc(dateRange(start, end))}</p>
         <p id="season-avg"></p></div>
     </div>
-    ${list.length ? `<ol class="eps">${list.map(epRow).join('')}</ol>` : `<div class="empty" style="margin-top:20px">No episodes have been announced for this season.</div>`}`;
+    ${list.length ? `<ol class="eps">${list.map(epRow).join('')}</ol>` : `<div class="empty" style="margin-top:20px">No episodes have been announced for this season.</div>`}
+    ${nextSeasonBtn(seasons, bySeason, n)}`;
+  const nb = $('[data-next-season]', panel);
+  if (nb) nb.onclick = () => {
+    const m = +nb.dataset.nextSeason;
+    history.replaceState(null, '', `#/show/${current.show.id}/season/${m}`); lastRoute = location.pathname + location.hash;
+    selectSeason(m);
+    $('#season-nav').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
   const er = (store.shows[current.show.id] || {}).episodes || {};
   list.forEach(ep => {
     const slot = $(`#ep-${ep.id} .ep-rate`, panel);
@@ -1094,6 +1203,10 @@ function renderSeason(n) {
     });
   });
   refreshSeasonAvg();
+}
+function nextSeasonBtn(seasons, bySeason, n) {
+  const nx = seasons.find(se => se.number > n && (bySeason.get(se.number) || []).length);
+  return nx ? `<div class="season-next"><button type="button" class="btn" data-next-season="${nx.number}">Next: Season ${nx.number}</button></div>` : '';
 }
 function epRow(ep) {
   const img = ep.image && ep.image.medium;
@@ -1230,9 +1343,10 @@ function renderMine() {
         ${list.length ? `<label class="sr" for="sort">Sort by</label><select class="btn" id="sort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="most">Most episodes scored</option><option value="name">Name</option></select>` : ''}
       </div></div>
     <p class="recap">${recap}</p>
-    <section class="level-card" aria-label="Your level">${levelCardHTML(all.length, justLeveled())}</section>
-    ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p><section class="profile-card" id="profile-card" aria-label="Your profile"></section>`
+    ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p>`
       : fb && authReady ? `<p class="sync-note"><span>Sign in to keep these in your account and see them on any device.</span><button type="button" class="btn google" data-signin>${GOOGLE_G}Sign in with Google</button></p>` : ''}
+    <section class="level-card" aria-label="Your level">${levelCardHTML(all.length, justLeveled())}</section>
+    ${user ? `<section class="profile-card" id="profile-card" aria-label="Your profile"></section>` : ''}
     <ul class="mine" id="mine"></ul>
     ${list.length ? '' : '<a class="btn primary" href="#/">Browse series</a>'}
   </section>`;
@@ -1641,7 +1755,9 @@ async function renderTheirShow(name, showId, seasonNum) {
     panel.innerHTML = `<div class="season-head"><div><h3>Season ${n}</h3><p>${r.length ? `${esc(first)} scored ${r.length} of ${list.filter(isAired).length} aired episodes, averaging <strong>${one(avgOf(r.map(e => their[e.id].r)))}</strong>.` : `${esc(first)} hasn’t scored this season.`}</p></div></div>
       <ol class="eps">${list.map(e => `<li class="ep compact" id="ep-${e.id}"><span class="ep-n">${e.number ?? 'Sp'}</span>
         <div class="ep-main"><h4>${esc(e.name || 'Title not announced')}</h4>${e.airdate ? `<p class="ep-meta"><span>${esc(fmtDate(e.airdate))}</span></p>` : ''}</div>
-        <div class="ep-rate"></div></li>`).join('')}</ol>`;
+        <div class="ep-rate"></div></li>`).join('')}</ol>${nextSeasonBtn(seasons, bySeason, n)}`;
+    const nb = $('[data-next-season]', panel);
+    if (nb) nb.onclick = () => { const m = +nb.dataset.nextSeason; history.replaceState(null, '', onHttp ? profilePath(prof.username, `/show/${showId}/season/${m}`) : `#/u/${prof.username}/show/${showId}/season/${m}`); lastRoute = location.pathname + location.hash; pick(m); $('#season-nav').scrollIntoView({ block: 'start' }); };
     list.forEach(e => {
       const slot = $(`#ep-${e.id} .ep-rate`, panel);
       if (!isAired(e)) { slot.innerHTML = `<span class="later-note">${e.airdate ? 'Airs ' + esc(fmtDate(e.airdate)) : 'Air date not announced'}</span>`; return; }
