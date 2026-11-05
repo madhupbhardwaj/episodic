@@ -362,6 +362,34 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
   .people-search{flex-direction:column}
 }
 @media (max-width:420px){.nav{gap:12px}.btn.signin{width:36px;padding:0}.btn.signin span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+/* ---------- Levels ---------- */
+.lvl{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 3px;border-radius:999px;background:var(--signal-soft);color:var(--signal);font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.2;white-space:nowrap;vertical-align:middle}
+.lvl-mark{position:relative;display:inline-grid;place-items:center;width:22px;height:22px;flex:none}
+.lvl-mark svg{position:absolute;inset:0;width:100%;height:100%}
+.lvl-mark path{fill:var(--signal)}
+.lvl-mark .n{position:relative;font-family:var(--sans);font-size:10px;font-weight:700;line-height:1;color:var(--signal-ink)}
+.lvl-mark.lg{width:68px;height:68px}
+.lvl-mark.lg .n{font-family:var(--display);font-size:26px;font-weight:400}
+.lvl-mark.off path{fill:var(--sunk)}
+.lvl-mark.off .n{color:var(--ink-2)}
+.prof-head .lvl{margin-top:10px}
+.people b .lvl{margin-left:8px;font-size:12px}
+.level-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:0 0 24px;max-width:720px}
+.level-top{display:flex;align-items:center;gap:16px}
+.level-top h2{font-family:var(--display);font-size:30px;line-height:1.05;font-weight:400}
+.level-top p{margin:4px 0 0;font-size:15px;color:var(--ink-2)}
+.level-card .track{margin-top:18px}
+.level-card .next{margin:8px 0 0;font-size:14px;color:var(--ink-2)}
+.ladder{list-style:none;margin:20px 0 0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:14px 8px}
+.ladder li{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:13px;color:var(--ink-2)}
+.ladder li strong{font-size:14px;font-weight:600;color:var(--ink-2)}
+.ladder li.got strong{color:var(--ink)}
+.ladder li.now strong{color:var(--signal)}
+.ladder .lvl-mark{width:34px;height:34px}
+.ladder .lvl-mark .n{font-size:13px}
+.lvl-mark.pop{animation:pop .5s cubic-bezier(.2,.8,.2,1.4) both}
+@keyframes pop{from{transform:scale(.6) rotate(-30deg)}to{transform:none}}
+@media (max-width:760px){.level-card{padding:16px}.level-top h2{font-size:26px}.lvl-mark.lg{width:56px;height:56px}.lvl-mark.lg .n{font-size:22px}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
@@ -684,7 +712,7 @@ function isAired(ep) {
   return false;
 }
 const heat = v => ({ c: `color-mix(in srgb, var(--signal) ${Math.round(18 + v * 8.2)}%, var(--sunk))`, t: v >= 6 ? 'var(--signal-ink)' : 'var(--ink)' });
-function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2000); }
+function toast(m, ms = 2000) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
 function setTitle(t) { document.title = t ? `${t} | Tenbars` : 'Tenbars'; }
 function setNav(v) { $$('[data-nav]').forEach(a => { const on = a.dataset.nav === v; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); }); app.dataset.view = v; }
 const skeletons = n => Array.from({ length: n }, () => `<div><div class="poster skel"></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-line" style="width:45%"></div></div>`).join('');
@@ -1080,6 +1108,47 @@ function epRow(ep) {
     <div class="ep-rate"></div></li>`;
 }
 
+/* ---------- Levels: based on how many episodes someone has rated ----------
+   To add or change a level, edit this list (keep it in order). */
+const LEVELS = [
+  { n: 1, name: 'Pilot', at: 5 },
+  { n: 2, name: 'Regular', at: 20 },
+  { n: 3, name: 'Binger', at: 50 },
+  { n: 4, name: 'Critic', at: 100 },
+  { n: 5, name: 'Showrunner', at: 200 }
+];
+const BURST_D = 'M16.00 1.00 L19.52 5.16 L24.82 3.86 L25.22 9.30 L30.27 11.36 L27.40 16.00 L30.27 20.64 L25.22 22.70 L24.82 28.14 L19.52 26.84 L16.00 31.00 L12.48 26.84 L7.18 28.14 L6.78 22.70 L1.73 20.64 L4.60 16.00 L1.73 11.36 L6.78 9.30 L7.18 3.86 L12.48 5.16Z';
+function levelFor(count) {
+  let cur = null;
+  for (const l of LEVELS) if (count >= l.at) cur = l;
+  return { cur, next: LEVELS.find(l => count < l.at) || null, count };
+}
+const episodeCount = st => Object.values((st || store).shows).reduce((a, r) => a + Object.keys(r.episodes || {}).length, 0);
+const levelMark = (n, cls = '') => `<span class="lvl-mark ${cls}" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="${BURST_D}"></path></svg><span class="n">${n}</span></span>`;
+/* A small pill, e.g. "3 Binger". Empty until someone reaches level 1. */
+function levelBadge(count) {
+  const { cur } = levelFor(count || 0);
+  if (!cur) return '';
+  return `<span class="lvl" title="Level ${cur.n} of ${LEVELS.length}: ${cur.name}, ${cur.at}+ episodes rated">${levelMark(cur.n)}<span><span class="sr">Level ${cur.n}, </span>${cur.name}</span></span>`;
+}
+/* Animate the badge once on Your ratings right after a level-up. */
+function justLeveled() {
+  try { const v = sessionStorage.getItem('tenbars.levelup'); sessionStorage.removeItem('tenbars.levelup'); return !!v; } catch (e) { return false; }
+}
+function levelCardHTML(count, pop) {
+  const { cur, next } = levelFor(count);
+  const from = cur ? cur.at : 0;
+  const pct = next ? Math.max(0, Math.min(100, (count - from) / (next.at - from) * 100)) : 100;
+  const left = next ? next.at - count : 0;
+  return `
+    <div class="level-top">${cur ? levelMark(cur.n, 'lg' + (pop ? ' pop' : '')) : levelMark('0', 'lg off')}
+      <div><h2>${cur ? esc(cur.name) : 'No level yet'}</h2>
+        <p>${cur ? `Level ${cur.n} of ${LEVELS.length}. ` : ''}${plural(count, 'episode')} rated.</p></div></div>
+    <div class="track" role="progressbar" aria-label="Progress to the next level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><span style="width:${pct}%"></span></div>
+    <p class="next">${next ? `Rate ${plural(left, 'more episode')} to reach ${esc(next.name)}.` : 'You’ve reached the top level.'}</p>
+    <ol class="ladder">${LEVELS.map(l => `<li class="${count >= l.at ? 'got' : ''}${cur && cur.n === l.n ? ' now' : ''}">${levelMark(l.n, count >= l.at ? '' : 'off')}<strong>${esc(l.name)}</strong><span>${l.at} episodes</span></li>`).join('')}</ol>`;
+}
+
 /* ---------- Ratings ---------- */
 function ensureRec() {
   const s = current.show;
@@ -1094,10 +1163,16 @@ function commit(r) {
   save([r.id]); refreshStats();
 }
 function setEpRating(ep, v) {
+  const before = levelFor(episodeCount()).cur;
   const r = ensureRec();
   if (v) r.episodes[ep.id] = { r: v, s: ep.season, n: ep.number, rt: ep.runtime || current.show.averageRuntime || 0 };
   else delete r.episodes[ep.id];
   commit(r);
+  const after = levelFor(episodeCount()).cur;
+  if (after && (!before || after.n > before.n)) {
+    toast(`Level up! You’re now level ${after.n}, ${after.name}.`, 3600);
+    try { sessionStorage.setItem('tenbars.levelup', String(after.n)); } catch (e) {}
+  }
 }
 function refreshStats() {
   if (!current || !$('#prog')) return;
@@ -1155,6 +1230,7 @@ function renderMine() {
         ${list.length ? `<label class="sr" for="sort">Sort by</label><select class="btn" id="sort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="most">Most episodes scored</option><option value="name">Name</option></select>` : ''}
       </div></div>
     <p class="recap">${recap}</p>
+    <section class="level-card" aria-label="Your level">${levelCardHTML(all.length, justLeveled())}</section>
     ${user ? `<p class="sync-note"><span><span class="dot"></span>Saved to your account, ${esc(user.email)}</span></p><section class="profile-card" id="profile-card" aria-label="Your profile"></section>`
       : fb && authReady ? `<p class="sync-note"><span>Sign in to keep these in your account and see them on any device.</span><button type="button" class="btn google" data-signin>${GOOGLE_G}Sign in with Google</button></p>` : ''}
     <ul class="mine" id="mine"></ul>
@@ -1405,7 +1481,7 @@ async function renderPeople(q) {
     try {
       const res = await searchPeople(term, 12);
       if (my !== seq || id !== renderId) return;
-      out.innerHTML = res.length ? res.map(pp => `<li><a href="${profileHref(pp.username)}">${avatarHTML(pp)}<div><b>${esc(pp.name || pp.username)}</b><small>@${esc(pp.username)}${user && pp.uid === user.uid ? ' (you)' : ''}. ${esc(statsLine(pp.stats))}</small></div></a></li>`).join('')
+      out.innerHTML = res.length ? res.map(pp => `<li><a href="${profileHref(pp.username)}">${avatarHTML(pp)}<div><b>${esc(pp.name || pp.username)}${levelBadge(pp.stats && pp.stats.episodes)}</b><small>@${esc(pp.username)}${user && pp.uid === user.uid ? ' (you)' : ''}. ${esc(statsLine(pp.stats))}</small></div></a></li>`).join('')
         : `<li class="hint" style="padding:14px 4px">No one’s username starts with “${esc(term)}”. Check the spelling, or ask your friend for their profile link.</li>`;
     } catch (e) {
       if (my !== seq) return;
@@ -1458,7 +1534,7 @@ async function renderProfile(name) {
       + (all.length ? ` Their average episode score is <strong>${one(avgOf(all.map(e => e.r)))}</strong>.` : '');
   app.innerHTML = `
   <section class="wrap page">
-    <div class="prof-head">${avatarHTML(prof, 'lg')}<div><h1>${esc(prof.name || prof.username)}</h1><p class="handle">@${esc(prof.username)}</p></div>
+    <div class="prof-head">${avatarHTML(prof, 'lg')}<div><h1>${esc(prof.name || prof.username)}</h1><p class="handle">@${esc(prof.username)}</p>${levelBadge(all.length)}</div>
       <div class="tools">${rows.length ? `<label class="sr" for="psort">Sort by</label><select class="btn" id="psort"><option value="recent">Recently scored</option><option value="top">Highest score</option><option value="name">Name</option></select>` : ''}
         <button type="button" class="btn" id="share-prof">Share profile</button>${prof.own ? '<a class="btn" href="#/mine">Edit profile</a>' : ''}</div></div>
     <p class="recap" style="margin-top:20px">${recap}${prof.own && !prof.public ? ' Your profile is private, so only you can see this page.' : ''}</p>
