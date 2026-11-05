@@ -3,15 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--meta:start-->
 <title>Tenbars</title>
 <meta name="description" content="Search any TV series, open a season and score every episode out of 10.">
 <link rel="canonical" href="https://tenbars.vercel.app/">
-<meta property="og:site_name" content="Tenbars">
 <meta property="og:title" content="Tenbars">
 <meta property="og:description" content="Search any TV series, open a season and score every episode out of 10.">
 <meta property="og:url" content="https://tenbars.vercel.app/">
+<meta property="og:image" content="https://tenbars.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tenbars: score every episode you watch, out of 10.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tenbars.vercel.app/og.png">
+<!--meta:end-->
+<meta property="og:site_name" content="Tenbars">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Tenbars">
 <meta name="apple-mobile-web-app-title" content="Tenbars">
 <meta name="theme-color" content="#ECEDEF" media="(prefers-color-scheme: light)">
@@ -384,6 +396,62 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .linkrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .linkrow input{flex:1 1 220px;min-width:0;height:40px;border:1px solid var(--line);border-radius:7px;background:var(--paper);padding:0 12px;font-size:14px;color:var(--ink-2)}
 .share-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.season-head .qr-season{margin-left:auto;align-self:center}
+
+/* ---------- Quick rate ---------- */
+body.qr-open{overflow:hidden}
+.qr{position:fixed;inset:0;z-index:55;display:flex;background:var(--paper)}
+.qr-box{display:flex;flex-direction:column;width:100%;height:100%;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.qr-top{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 6px}
+.qr-x{flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--ink);cursor:pointer}
+.qr-x:hover{background:var(--sunk)}
+.qr-title{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.qr-title b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qr-count{font-size:13px;color:var(--ink-2)}
+.qr-prog{height:3px;background:var(--sunk);flex:none}
+.qr-prog span{display:block;height:100%;background:var(--signal);transition:width .3s}
+.qr-stage{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 20px 8px;overscroll-behavior:contain}
+.qr-card{max-width:520px;margin:0 auto}
+.qr-card.in-next{animation:qrNext .3s cubic-bezier(.2,.8,.2,1)}
+.qr-card.in-back{animation:qrBack .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes qrNext{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes qrBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.qr-img{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--sunk)}
+.qr-img img{width:100%;height:100%;object-fit:cover;display:block}
+.qr-img img.fb{filter:saturate(.7) brightness(.85)}
+.qr-kicker{margin:16px 0 0;font-size:13px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qr-new{background:var(--signal);color:var(--signal-ink);border-radius:4px;padding:2px 7px;font-size:12px}
+.qr-card h2{margin:6px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,6vw,34px);line-height:1.08;letter-spacing:-.01em}
+.qr-meta{margin:6px 0 0;font-size:14px;color:var(--ink-2)}
+.qr-sum{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.qr-meter{margin:26px 0 0}
+.qr .meter.live{display:flex;width:100%;--h:58px;--fs:34px}
+.qr .meter.live .bars{flex:1;justify-content:space-between}
+.qr .meter.live .bars i{flex:1 1 0;width:auto;max-width:34px;border-radius:3px}
+.qr-hint{margin:12px 0 0;font-size:13px;color:var(--ink-2)}
+.qr-foot{display:flex;justify-content:space-between;gap:12px;padding:12px 20px 16px;border-top:1px solid var(--line);flex:none}
+.qr-foot .btn{height:48px;min-width:110px;font-size:15px}
+.qr-foot .btn:disabled{opacity:.4;cursor:default}
+.qr-end{text-align:center;padding-top:6vh}
+.qr-end .qr-burst{color:var(--signal)}
+.qr-end h2{margin-top:12px}
+.qr-end .qr-sum{-webkit-line-clamp:unset;display:block;max-width:42ch;margin:12px auto 0}
+.qr-end .qr-sum strong{color:var(--ink)}
+.qr-ask{margin:28px 0 0;font-weight:600}
+.qr-end .qr-meter{margin-top:12px;text-align:left}
+.qr-end-acts{display:flex;flex-direction:column;gap:10px;margin:28px auto 0;max-width:320px}
+.qr-end-acts .btn{height:48px}
+@media (min-width:761px){
+  .qr{background:rgba(10,11,14,.55);align-items:center;justify-content:center;padding:24px}
+  .qr-box{width:min(600px,100%);height:auto;max-height:min(860px,calc(100vh - 48px));background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.35);padding:0}
+  .qr-stage{padding:24px 32px 12px}
+  .qr-foot{padding:14px 32px 18px}
+  .qr-end{padding-top:12px}
+}
+@media (max-width:760px){
+  .season-head{flex-wrap:wrap}
+  .season-head .qr-season{margin-left:0;width:100%;height:44px}
+}
 .ep.compact{grid-template-columns:52px minmax(0,1fr) auto}
 .ep.compact .ep-rate{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .ep-rate .you{font-size:13px;color:var(--ink-2);white-space:nowrap}
@@ -441,6 +509,24 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .acct-menu .lvl-line small{display:block;font-size:13px;color:var(--ink-2)}
 .acct-menu .menu-item{display:flex;align-items:center;min-height:44px;margin-top:6px;padding:0 4px;font-size:15px;font-weight:500;color:var(--ink);border-bottom:1px solid var(--line)}
 .acct-menu .menu-item:hover{color:var(--signal)}
+.acct-menu button.menu-item{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;font-size:15px;font-weight:500;text-align:left;cursor:pointer}
+.acct-menu button.menu-item[hidden]{display:none}
+.linkish{background:none;border:0;padding:0;font:inherit;color:var(--signal);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.install-row{margin-bottom:10px!important}
+.install-row[hidden],.install-hint[hidden]{display:none}
+.install-hint{display:flex;align-items:center;gap:10px;margin:18px 0 0!important;font-size:15px!important;color:var(--ink)!important;max-width:540px!important}
+.install-hint svg{width:20px;height:20px;color:var(--signal);flex:none}
+.install-hint .linkish{min-height:40px}
+.hint-x{margin-left:auto;width:36px;height:36px;border:0;border-radius:50%;background:none;color:var(--ink-2);font-size:20px;line-height:1;cursor:pointer}
+.hint-x:hover{background:var(--sunk)}
+.sheet{position:fixed;inset:0;z-index:58;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,11,14,.5)}
+.sheet-box{width:min(460px,100%);background:var(--surface);border-radius:16px 16px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+@media (min-width:761px){.sheet{align-items:center}.sheet-box{border-radius:16px}}
+.sheet-box h2{margin:0;font-family:var(--display);font-weight:400;font-size:28px;line-height:1.1}
+.sheet-box ol{margin:14px 0 0;padding-left:22px;line-height:1.6;font-size:16px}
+.sheet-box li{margin-top:8px}
+.sheet-box .ios-share{display:inline-block;vertical-align:-3px;width:18px;height:18px;color:var(--signal)}
+.sheet-box .btn{width:100%;height:46px;margin-top:20px}
 
 /* ---------- Bottom tab bar (phones) ---------- */
 .tabbar{display:none}
@@ -516,6 +602,7 @@ footer a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 <footer>
   <div class="wrap">
+    <p id="install-row" class="install-row" hidden><button type="button" class="linkish" data-install>Install Tenbars as an app</button> on your phone or computer. It opens like any other app, straight from your home screen.</p>
     <p>Series details, posters and episode images come from <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVmaze</a> (CC BY-SA 4.0). <span id="storage-note">Your ratings are stored in this browser.</span></p>
   </div>
 </footer>
@@ -766,8 +853,9 @@ function renderAccount() {
       <a class="lvl-line" id="acct-lvl-line" href="#/mine"></a>
       <a class="menu-item" href="#/mine">Your ratings</a>
       ${myProfile ? `<a class="menu-item" href="${profileHref(myProfile.username)}">Your profile, @${esc(myProfile.username)}</a>` : myProfile === null ? `<a class="menu-item" href="#/mine">Pick a username so friends can find you</a>` : ''}
+      <button type="button" class="menu-item" data-install hidden>Install the app</button>
       <button type="button" class="btn" id="signout">Sign out</button></div></div>`;
-  refreshLevelChip();
+  refreshLevelChip(); refreshInstall();
   note.textContent = `Your ratings are saved to your Google account (${user.email}), so they show up wherever you sign in.`;
   $('#avatar').onclick = e => { e.stopPropagation(); setMenu($('#acct-menu').hidden); };
   $('#signout').onclick = () => { setMenu(false); signOut(); };
@@ -916,11 +1004,13 @@ function meter(value, onChange, opt = {}) {
     tip.style.left = (c.offsetLeft + c.offsetWidth / 2) + 'px';
     tip.classList.add('on');
   };
-  const set = v => {
+  /* src says how the score was given (pointer, digit, step, clear, undo), so callers can react. */
+  const set = (v, src) => {
     cur = Math.min(10, Math.max(0, v)); paint(cur); sync();
     el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
-    onChange(cur);
+    onChange(cur, src);
   };
+  el.setScore = set;
   /* Tap a bar to score, tap it again to clear, or slide across the bars. A bubble above
      your finger shows the score, since your thumb hides the bars. */
   let drag = null;
@@ -945,24 +1035,24 @@ function meter(value, onChange, opt = {}) {
   bars.addEventListener('pointerup', e => {
     if (!drag) return;
     const v = at(e), d = drag; endDrag();
-    set(!d.moved && v === cur ? 0 : v);
+    set(!d.moved && v === cur ? 0 : v, 'pointer');
   });
   bars.addEventListener('pointercancel', () => { endDrag(); paint(cur); });
   bars.addEventListener('pointerleave', () => { if (!drag) paint(cur); });
   clr.addEventListener('click', () => {
     const prev = cur;
-    set(0);
+    set(0, 'clear');
     bars.focus({ preventScroll: true });
-    toast('Score cleared', 4500, { label: 'Undo', run: () => set(prev) });
+    toast('Score cleared', 4500, { label: 'Undo', run: () => set(prev, 'undo') });
   });
   bars.addEventListener('keydown', e => {
     const k = e.key;
-    if (k === 'ArrowRight' || k === 'ArrowUp') set(cur + 1);
-    else if (k === 'ArrowLeft' || k === 'ArrowDown') set(cur - 1);
-    else if (k === 'Home') set(1);
-    else if (k === 'End') set(10);
-    else if (k === 'Delete' || k === 'Backspace') set(0);
-    else if (/^[0-9]$/.test(k)) set(k === '0' ? 10 : +k);
+    if (k === 'ArrowRight' || k === 'ArrowUp') set(cur + 1, 'step');
+    else if (k === 'ArrowLeft' || k === 'ArrowDown') set(cur - 1, 'step');
+    else if (k === 'Home') set(1, 'step');
+    else if (k === 'End') set(10, 'step');
+    else if (k === 'Delete' || k === 'Backspace') set(0, 'clear');
+    else if (/^[0-9]$/.test(k)) set(k === '0' ? 10 : +k, 'digit');
     else return;
     e.preventDefault();
   });
@@ -1054,12 +1144,14 @@ async function renderHome() {
         <h1>Keep score of every episode you watch.</h1>
         <p>Search for a series, open any season and give each episode a score out of 10. You'll see how every season compares.</p>
         <form id="intro-form" role="search"><label class="sr" for="intro-q">Search series</label><input id="intro-q" type="search" placeholder="Breaking Bad, Dark, Panchayat…" enterkeyhint="search"><button class="btn primary">Search</button></form>
+        <p class="install-hint" data-install-hint hidden>${BURST_SVG}<span>Get Tenbars on your home screen.</span><button type="button" class="linkish" data-install>Install</button><button type="button" class="hint-x" data-install-dismiss aria-label="Hide this">×</button></p>
       </div>
       <div class="stack" id="stack" aria-hidden="true"></div>
     </section>
     ${mine.length ? `<section class="sec"><div class="sec-head"><h2>Pick up where you left off</h2><a class="link" href="#/mine">See all your ratings</a></div><div class="shelf">${mine.slice(0, 14).map(shelfCard).join('')}</div></section>` : ''}
     <section class="sec"><div class="sec-head"><h2>Popular series</h2><div class="filters" id="filters" role="group" aria-label="Filter by genre"></div></div><div class="grid" id="pop">${skeletons(14)}</div></section>
   </div>`;
+  refreshInstall();
   $('#intro-form').onsubmit = e => { e.preventDefault(); const q = $('#intro-q').value.trim(); if (q) go('#/search/' + encodeURIComponent(q)); };
   try {
     if (!popular.length) {
@@ -1217,7 +1309,7 @@ function drawShow(seasonNum) {
         <dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
         <div class="my-score"><h2>Your score for the series</h2><div id="series-meter"></div>
           <div class="track"><span id="prog" style="width:0"></span></div><p id="prog-text"></p>
-          ${user ? `<div class="share-row"><button type="button" class="btn" id="share-mine">Share your scores</button></div>` : ''}</div>
+          <div class="share-row">${eps.some(isAired) ? `<button type="button" class="btn primary" id="qr-open">${qrIcon}Quick rate</button>` : ''}${user ? `<button type="button" class="btn" id="share-mine">Share your scores</button>` : ''}</div></div>
         ${summary ? `<p class="summary">${esc(summary)}</p>` : ''}
       </div>
     </section>
@@ -1235,6 +1327,8 @@ function drawShow(seasonNum) {
     const r = ensureRec(); r.showRating = v; commit(r);
     toast(v ? `Scored ${s.name} ${v}/10` : 'Series score removed');
   }, { size: 'lg', label: `Your score for ${s.name}`, prompt: 'Tap a bar to score' }));
+  const qrBtn = $('#qr-open');
+  if (qrBtn) qrBtn.onclick = () => openQuickRate();
   const shareBtn = $('#share-mine');
   if (shareBtn) shareBtn.onclick = () => {
     if (myProfile && myProfile.public) share(profileUrl(myProfile.username, `/show/${s.id}`), `${myProfile.name || myProfile.username}'s scores for ${s.name}`);
@@ -1293,9 +1387,12 @@ function renderSeason(n) {
       <div><h3>Season ${n}${named ? `: ${esc(named)}` : ''}</h3>
         <p>${plural(list.length, 'episode')}${planned}, ${esc(dateRange(start, end))}</p>
         <p id="season-avg"></p></div>
+      ${list.some(isAired) ? `<button type="button" class="btn qr-season" data-qr-season="${n}">${qrIcon}Quick rate Season ${n}</button>` : ''}
     </div>
     ${list.length ? `<ol class="eps">${list.map(epRow).join('')}</ol>` : `<div class="empty" style="margin-top:20px">No episodes have been announced for this season.</div>`}
     ${nextSeasonBtn(seasons, bySeason, n)}`;
+  const qs = $('[data-qr-season]', panel);
+  if (qs) qs.onclick = () => openQuickRate(n);
   const nb = $('[data-next-season]', panel);
   if (nb) nb.onclick = () => {
     const m = +nb.dataset.nextSeason;
@@ -1404,6 +1501,157 @@ function setEpRating(ep, v) {
     try { sessionStorage.setItem('tenbars.levelup', String(after.n)); } catch (e) {}
   }
 }
+/* ---------- Quick rate: one episode at a time, full screen ---------- */
+const qrIcon = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M2 3.5v9l5.5-4.5zM8.5 3.5v9l5.5-4.5z" fill="currentColor"/></svg>';
+let qr = null;
+function openQuickRate(seasonNum) {
+  if (!current || qr) return;
+  const { show, seasons, bySeason } = current;
+  const list = seasons.flatMap(se => (bySeason.get(se.number) || []).filter(isAired));
+  if (!list.length) return;
+  const er = () => (store.shows[show.id] || {}).episodes || {};
+  const unratedFrom = from => { for (let i = from; i < list.length; i++) if (!er()[list[i].id]) return i; return -1; };
+  let start;
+  if (seasonNum != null) {
+    const first = list.findIndex(e => e.season === seasonNum);
+    const open = list.findIndex(e => e.season === seasonNum && !er()[e.id]);
+    start = open >= 0 ? open : Math.max(0, first);
+  } else start = Math.max(0, unratedFrom(0));
+  qr = { show, list, i: start, rated: new Set(), timer: null, scrollY: window.scrollY, season: +($('#season-panel') || {}).dataset?.season || seasonNum || 1, prevFocus: document.activeElement };
+
+  const root = document.createElement('div');
+  root.className = 'qr';
+  root.innerHTML = `
+    <div class="qr-box" role="dialog" aria-modal="true" aria-label="Quick rate ${esc(show.name)}">
+      <div class="qr-top">
+        <button type="button" class="qr-x" aria-label="Close quick rate"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <div class="qr-title"><b>${esc(show.name)}</b><span class="qr-count"></span></div>
+      </div>
+      <div class="qr-prog" aria-hidden="true"><span></span></div>
+      <div class="qr-stage"></div>
+      <div class="qr-foot">
+        <button type="button" class="btn quiet" data-qr="back">Back</button>
+        <button type="button" class="btn" data-qr="next">Skip</button>
+      </div>
+    </div>`;
+  document.body.append(root);
+  document.body.classList.add('qr-open');
+  qr.root = root;
+  try { history.pushState({ qr: 1 }, '', location.href); qr.pushed = true; } catch (e) {}
+  $('.qr-x', root).onclick = () => closeQuickRate();
+  root.addEventListener('click', e => { if (e.target === root) closeQuickRate(); });
+  $('[data-qr="back"]', root).onclick = () => qrGo(qr.i - 1, -1);
+  $('[data-qr="next"]', root).onclick = () => qrGo(qr.i + 1, 1);
+  root.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); closeQuickRate(); return; }
+    const onBars = e.target.classList && e.target.classList.contains('bars');
+    if (onBars) return; // the bars handle their own keys
+    if (/^[0-9]$/.test(e.key) && qr.meter) { e.preventDefault(); qr.meter.setScore(e.key === '0' ? 10 : +e.key, 'digit'); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); qrGo(qr.i + 1, 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); qrGo(qr.i - 1, -1); }
+  });
+  qrDraw(0);
+}
+function qrGo(i, dir) {
+  if (!qr) return;
+  clearTimeout(qr.timer);
+  if (i < 0) return;
+  qr.i = i;
+  qrDraw(dir);
+}
+function qrDraw(dir) {
+  const { list, show, root } = qr;
+  const stage = $('.qr-stage', root), er = (store.shows[show.id] || {}).episodes || {};
+  const aired = list.length, done = list.filter(e => er[e.id]).length;
+  $('.qr-prog span', root).style.width = (done / aired * 100) + '%';
+  $('.back, [data-qr="back"]', root).disabled = qr.i === 0;
+  if (qr.i >= list.length) return qrFinish();
+  const ep = list[qr.i];
+  $('.qr-count', root).textContent = `${done} of ${aired} scored`;
+  const nextBtn = $('[data-qr="next"]', root);
+  nextBtn.style.display = '';
+  nextBtn.textContent = er[ep.id] ? 'Next' : 'Skip';
+  const img = ep.image ? ep.image.medium : null, big = ep.image ? (ep.image.original || ep.image.medium) : null;
+  const fallback = current && current.backdrop ? current.backdrop : show.image ? (show.image.original || show.image.medium) : null;
+  const sum = strip(ep.summary);
+  const meta = [ep.airdate ? fmtDate(ep.airdate) : '', ep.runtime ? ep.runtime + ' min' : ''].filter(Boolean).join(' · ');
+  const firstOfSeason = qr.i === 0 || list[qr.i - 1].season !== ep.season;
+  stage.innerHTML = `<article class="qr-card ${dir > 0 ? 'in-next' : dir < 0 ? 'in-back' : ''}">
+    <div class="qr-img">${img ? `<img src="${esc(img)}" srcset="${esc(img)} 1x, ${esc(big)} 2x" alt="">` : fallback ? `<img src="${esc(fallback)}" alt="" class="fb">` : ''}</div>
+    <p class="qr-kicker">${firstOfSeason && qr.i ? `<span class="qr-new">New season</span>` : ''}Season ${ep.season} · ${ep.number != null ? 'Episode ' + ep.number : 'Special'}</p>
+    <h2>${esc(ep.name)}</h2>
+    ${meta ? `<p class="qr-meta">${esc(meta)}</p>` : ''}
+    ${sum ? `<p class="qr-sum">${esc(sum)}</p>` : ''}
+    <div class="qr-meter"></div>
+    <p class="qr-hint">${!qr.tipShown ? 'Tap a bar, or slide across them. The next episode comes up by itself.' : (matchMedia('(pointer: fine)').matches ? 'Keyboard: 1 to 9, and 0 for a 10. Esc to close.' : '')}</p>
+  </article>`;
+  const m = meter(er[ep.id] && er[ep.id].r, (v, src) => {
+    setEpRating(ep, v);
+    if (v) qr.rated.add(ep.id); else qr.rated.delete(ep.id);
+    const e2 = (store.shows[show.id] || {}).episodes || {};
+    const d2 = list.filter(e => e2[e.id]).length;
+    $('.qr-prog span', root).style.width = (d2 / aired * 100) + '%';
+    $('.qr-count', root).textContent = `${d2} of ${aired} scored`;
+    nextBtn.textContent = v ? 'Next' : 'Skip';
+    clearTimeout(qr.timer);
+    if (v && (src === 'pointer' || src === 'digit')) {
+      qr.timer = setTimeout(() => {
+        if (!qr) return;
+        // Move on to the next episode you haven't scored yet.
+        let n = -1;
+        for (let k = qr.i + 1; k < list.length; k++) if (!e2[list[k].id] && !((store.shows[show.id] || {}).episodes || {})[list[k].id]) { n = k; break; }
+        qrGo(n < 0 ? list.length : n, 1);
+      }, 480);
+    }
+  }, { size: 'lg', label: `Score for season ${ep.season} episode ${ep.number ?? ''}, ${ep.name}` });
+  qr.meter = m;
+  qr.tipShown = true;
+  $('.qr-meter', stage).append(m);
+  $('.bars', m).focus({ preventScroll: true });
+  // Fetch the next picture early so it's ready when you get there.
+  const nx = list[qr.i + 1];
+  if (nx && nx.image) { const im = new Image(); im.src = nx.image.medium; }
+}
+function qrFinish() {
+  const { list, show, root } = qr;
+  const er = (store.shows[show.id] || {}).episodes || {};
+  const session = [...qr.rated].map(id => er[id]).filter(Boolean);
+  const all = list.filter(e => er[e.id]);
+  const rec = store.shows[show.id];
+  $('.qr-count', root).textContent = `${all.length} of ${list.length} scored`;
+  $('[data-qr="next"]', root).style.display = 'none';
+  $('.qr-stage', root).innerHTML = `<article class="qr-card qr-end in-next">
+    <svg class="qr-burst" viewBox="0 0 32 32" width="56" height="56" aria-hidden="true"><path d="${BURST_D}" fill="currentColor"/></svg>
+    <h2>${all.length === list.length ? 'Every aired episode scored' : 'That’s the last one'}</h2>
+    <p class="qr-sum">${session.length ? `You scored ${plural(session.length, 'episode')} just now, averaging <strong>${one(avgOf(session.map(e => e.r)))}</strong>.` : 'You didn’t score anything this time.'}
+      ${all.length ? ` Across the whole series you’ve scored ${all.length} of ${list.length}, averaging <strong>${one(avgOf(all.map(e => er[e.id].r)))}</strong>.` : ''}</p>
+    ${all.length && !(rec && rec.showRating) ? `<p class="qr-ask">And the series overall?</p><div class="qr-meter"></div>` : ''}
+    <div class="qr-end-acts"><button type="button" class="btn primary" data-qr="done">Done</button>${all.length < list.length ? `<button type="button" class="btn" data-qr="again">Go to an unscored one</button>` : ''}</div>
+  </article>`;
+  const slot = $('.qr-end .qr-meter', root);
+  if (slot) slot.append(meter(0, v => { const r = ensureRec(); r.showRating = v; commit(r); }, { size: 'lg', label: `Your score for ${show.name}` }));
+  $('[data-qr="done"]', root).onclick = () => closeQuickRate();
+  const again = $('[data-qr="again"]', root);
+  if (again) again.onclick = () => { const k = list.findIndex(e => !er[e.id]); qrGo(Math.max(0, k), 1); };
+  $('[data-qr="done"]', root).focus({ preventScroll: true });
+}
+function closeQuickRate(fromHistory) {
+  if (!qr) return;
+  const q = qr; qr = null;
+  clearTimeout(q.timer);
+  q.root.remove();
+  document.body.classList.remove('qr-open');
+  if (q.pushed && !fromHistory && history.state && history.state.qr) history.back();
+  // Redraw the show page so every score you just gave appears there.
+  if (current && current.show.id === q.show.id && $('#season-panel')) {
+    const panelSeason = +$('#season-panel').dataset.season || q.season;
+    drawShow(panelSeason);
+    window.scrollTo(0, q.scrollY);
+    const qb = $('#qr-open'); if (qb) qb.focus({ preventScroll: true });
+  }
+}
+window.addEventListener('popstate', () => { if (qr) closeQuickRate(true); });
+
 function refreshStats() {
   if (!current || !$('#prog')) return;
   const { show: s, bySeason, eps } = current;
@@ -1927,6 +2175,51 @@ async function renderTheirShow(name, showId, seasonNum) {
 }
 
 window.addEventListener('storage', e => { if (e.key === localKey() && !user) { store = load(); if (app.dataset.view === 'mine') renderMine(); else refreshStats(); } });
+/* ---------- Installable app ---------- */
+const BURST_SVG = `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="${BURST_D}" fill="currentColor"/></svg>`;
+let installEvt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function refreshInstall() {
+  const can = !isStandalone() && !!(installEvt || isIOS());
+  $$('[data-install]').forEach(b => { b.hidden = !can; });
+  const row = $('#install-row'); if (row) row.hidden = !can;
+  let dismissed = false; try { dismissed = !!localStorage.getItem('tenbars.installHint'); } catch (e) {}
+  $$('[data-install-hint]').forEach(h => { h.hidden = !can || dismissed || !matchMedia('(max-width: 1024px)').matches; });
+}
+async function doInstall() {
+  setMenu(false);
+  if (installEvt) {
+    const e = installEvt; installEvt = null;
+    e.prompt();
+    try { await e.userChoice; } catch (x) {}
+    refreshInstall();
+    return;
+  }
+  // iPhone and iPad have no install prompt, so show the two taps it takes.
+  const s = document.createElement('div');
+  s.className = 'sheet';
+  s.innerHTML = `<div class="sheet-box" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
+    <h2 id="sheet-h">Add Tenbars to your home screen</h2>
+    <ol><li>Tap the Share button <svg class="ios-share" viewBox="0 0 24 24" aria-label="Share"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> in Safari’s toolbar.</li>
+      <li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol>
+    <button type="button" class="btn primary">Got it</button></div>`;
+  const close = () => s.remove();
+  s.onclick = e => { if (e.target === s || e.target.closest('.btn')) close(); };
+  s.onkeydown = e => { if (e.key === 'Escape') close(); };
+  document.body.append(s);
+  $('.btn', s).focus();
+}
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; refreshInstall(); });
+addEventListener('appinstalled', () => { installEvt = null; refreshInstall(); toast('Tenbars is on your home screen now'); });
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-install]')) { e.preventDefault(); doInstall(); }
+  else if (e.target.closest('[data-install-dismiss]')) { try { localStorage.setItem('tenbars.installHint', '1'); } catch (x) {} refreshInstall(); }
+});
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+  addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
+
 /* Begin downloading a series as soon as a cursor rests on it or a finger touches it. */
 let warmT;
 const warm = e => {
@@ -1940,6 +2233,7 @@ document.addEventListener('pointerout', () => clearTimeout(warmT), { passive: tr
 document.addEventListener('touchstart', warm, { passive: true });
 
 route();
+refreshInstall();
 initAccounts();
 })();
 </script>
