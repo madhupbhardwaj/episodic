@@ -1,6 +1,7 @@
 {
   "rewrites": [
-    { "source": "^/@(.+)$", "destination": "/api/page?p=$1" }
+    { "source": "/@:name/:path+", "destination": "/api/page?p=:name/:path+" },
+    { "source": "/@:name", "destination": "/api/page?p=:name" }
   ],
   "headers": [
     { "source": "/sw.js", "headers": [
